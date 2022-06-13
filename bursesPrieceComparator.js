@@ -1,7 +1,6 @@
 
 class BursesPrieceComparator {
-    buyPairsToCompare = new Array("B", "a");
-    sellPairsToCompare = new Array("B", "a");
+    buyPairsToCompare = new Array("", "a");
 
     receivedTickers = new Array();
 
@@ -16,9 +15,12 @@ class BursesPrieceComparator {
                               .catch(error => { console.error("FAILED TO GET TICKERS " + error); });
         }
 
-        setTimeout(res => this.onTicketsReceiveTimeout(), 10000);
+        setTimeout(res => this.onTicketsReceiveTimeout(), 15000);
     }
 
+
+    //usdtArray = new Array()
+    prieceDifferences = new Array()
     onTickersReceived(res)
     {
         this.receivedTickers.push(res)
@@ -27,6 +29,37 @@ class BursesPrieceComparator {
             console.log("GET TICKERS SUCCESSFUL")
             this.beginCompare()
         }
+
+        for(const priece1 of this.burses[1].prieces) {
+            for(const priece0 of this.burses[0].prieces) {
+
+                if(priece1.pair === priece0.pair && priece0.pair.includes("_USDT"))
+                {
+                    var maximum = Math.max(priece0.last_priece, priece1.last_priece)
+                    var minimum = Math.min(priece0.last_priece, priece1.last_priece)
+                    var onePercent = maximum / 100
+                    //diff = maximum - minimum;
+                    var diff = 100-((minimum / maximum)*100)
+
+                    //diff = priece0.last_priece - 
+                    var prieceDifference = {pair: priece0.pair, difference: diff + '%'}
+                    console.dir(prieceDifference)
+                    this.prieceDifferences.push(prieceDifference)
+
+                }
+                // if(priece.pair.includes("_USDT"))
+                // {
+                //     console.log(priece)
+                //     this.usdtArray.push(priece)
+                // }
+            }
+            // if(priece.pair.includes("_USDT"))
+            // {
+            //     console.log(priece)
+            //     this.usdtArray.push(priece)
+            // }
+        }
+        //console.log("FOUND: " + this.usdtArray.length)
     }
 
     onTicketsReceiveTimeout() {

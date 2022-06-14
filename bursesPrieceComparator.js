@@ -29,7 +29,16 @@ class BursesPrieceComparator {
             console.log("GET TICKERS SUCCESSFUL")
             this.beginCompare()
         }
+    }
 
+    onTicketsReceiveTimeout() {
+        if(this.receivedTickers.length !== this.burses.length) {
+            console.error("FAILED TO GET ALL TICKERS RECEIVED: " + this.receivedTickers.length + " OF " + this.burses.length)
+            this.beginCompare()
+        }
+    }
+
+    beginCompare() {
         for(const priece1 of this.burses[1].prieces) {
             for(const priece0 of this.burses[0].prieces) {
 
@@ -42,10 +51,8 @@ class BursesPrieceComparator {
                     var diff = 100-((minimum / maximum)*100)
 
                     //diff = priece0.last_priece - 
-                    var prieceDifference = {pair: priece0.pair, difference: diff + '%'}
-                    console.dir(prieceDifference)
+                    var prieceDifference = {pair: priece0.pair, difference: diff}
                     this.prieceDifferences.push(prieceDifference)
-
                 }
                 // if(priece.pair.includes("_USDT"))
                 // {
@@ -60,17 +67,9 @@ class BursesPrieceComparator {
             // }
         }
         //console.log("FOUND: " + this.usdtArray.length)
-    }
 
-    onTicketsReceiveTimeout() {
-        if(this.receivedTickers.length !== this.burses.length) {
-            console.error("FAILED TO GET ALL TICKERS RECEIVED: " + this.receivedTickers.length + " OF " + this.burses.length)
-            this.beginCompare()
-        }
-    }
-
-    beginCompare() {
-
+        this.prieceDifferences.sort((a, b) => b.difference - a.difference)
+        console.dir(this.prieceDifferences)
     }
 }
 

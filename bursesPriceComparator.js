@@ -17,7 +17,6 @@ class BursesPriceComparator {
         setTimeout(res => this.onTicketsReceiveTimeout(), 15000);
     }
 
-    priceDifferences = new Array()
     onTickersReceived(res)
     {
         this.receivedTickers.push(res)
@@ -35,7 +34,8 @@ class BursesPriceComparator {
         }
     }
 
-    pricesArray = new Array()
+    pairsArray = new Array()
+    priceDifferences = new Array()
     beginCompare() {
 
         for(const burse of this.burses)
@@ -46,7 +46,7 @@ class BursesPriceComparator {
                 var pair = ''
                 if(burse_price.pair.includes("_USDT") == false)
                     continue
-                for(const array_price of this.pricesArray)
+                for(const array_price of this.pairsArray)
                 {
                     if(array_price.pair == burse_price.pair)
                     {
@@ -57,11 +57,11 @@ class BursesPriceComparator {
                 }
                 if(exists == false)
                 {
-                    this.pricesArray.push({pair: burse_price.pair, burses: [{price: burse_price.last_price, burse: burse.constructor.name}]})
+                    this.pairsArray.push({pair: burse_price.pair, burses: [{price: burse_price.last_price, burse: burse.constructor.name}]})
                 }
                 else
                 {
-                    for(var array_price of this.pricesArray)
+                    for(var array_price of this.pairsArray)
                     {
                         if(array_price.pair == pair)
                         {
@@ -83,14 +83,39 @@ class BursesPriceComparator {
             }
         }
 
-        for(const price of this.pricesArray)
-            if(price.burses.length > 1)
+        for(var pair of this.pairsArray)
+        {
+            if(pair.burses.length < 2)
+                continue
+            
+            var lowestBurse, lowestPrice = Math.floor(Number.MAX_SAFE_INTEGER)
+            var highestBurse, highestPrice = Math.floor(Number.MIN_SAFE_INTEGER)
+            for(const burse of pair.burses)
             {
-                console.log("pair: " + price.pair + " burses: " + price.burses.length)
-                for(const burse of price.burses)
-                    console.log(burse)
+                if(lowestPrice > burse.price)
+                {
+                    lowestBurse = burse.burse
+                    lowestPrice = burse.price
+                }
+                if(highestPrice < burse.price)
+                {
+                    highestBurse = burse.burse
+                    highestPrice = burse.price
+                }
             }
+            var diff = 100-((lowestPrice / highestPrice)*100)
+            this.priceDifferences.push({pair: pair.pair, highest: highestBurse, lowest: lowestBurse, diff: diff})
+        }
 
+         // sort by deifference
+        this.priceDifferences.sort((a, b) => b.diff - a.diff)
+        //console.dir(this.priceDifferences)
+
+        for(const diff of this.priceDifferences)
+        {
+            if(diff.diff > 1 && diff.diff < 50)
+                console.log(diff.pair + " " + diff.highest + " " + diff.lowest + " " + diff.diff )
+        }
 
         // var indexBurseOne = 1
         // var indexBurseTwo = 0

@@ -4,23 +4,20 @@ const gi = require('./burses/gateio')
 const me = require('./burses/mexc')
 const BursesComparator = require('./BursesPriceComparator')
 
-function sleep(ms) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-}
+timeout = new he(runFunc)
 
 var burses = []; 
 burses.push(new bm())
 burses.push(new gi())
 burses.push(new me())
 
+timeout.timeoutAfter(10);
+
 bc = new BursesComparator(burses);
-bc.compare();
 
 function runFunc() {
-  console.log("FUNC")
+  bc.compare();
 }
 
-helper = new he(runFunc)
+
 //helper.timeoutAfter(1)

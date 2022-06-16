@@ -14,7 +14,7 @@ class BursesPriceComparator {
                               .catch(error => { console.error("FAILED TO GET TICKERS " + error); });
         }
 
-        setTimeout(res => this.onTicketsReceiveTimeout(), 15000);
+        setTimeout(res => this.onTicketsReceiveTimeout(), this.burses.length*3000);
     }
 
     onTickersReceived(res)
@@ -31,6 +31,7 @@ class BursesPriceComparator {
         if(this.receivedTickers.length !== this.burses.length) {
             console.error("FAILED TO GET ALL TICKERS RECEIVED: " + this.receivedTickers.length + " OF " + this.burses.length)
             this.beginCompare()
+            this.receivedTickers = [];
         }
     }
 

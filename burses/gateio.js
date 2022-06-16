@@ -5,7 +5,7 @@ const fse = require('fs-extra');
 class Gateio extends(bu){
     
     pairs = new Array();
-    prieces = new Array();
+    prices = new Array();
 
     parsePairs() {
         console.log("parsePairs Gateio")
@@ -39,9 +39,9 @@ class Gateio extends(bu){
                 //fse.outputJsonSync('./tickers_gateio.json', res.data);
                 for(const ticker of res.data)
                 {
-                    this.prieces.push({pair: ticker.currency_pair, last_priece: ticker.last})
+                    this.prices.push({pair: ticker.currency_pair, last_price: ticker.last})
                 }
-                //console.dir(this.prieces)
+                //console.dir(this.prices)
                 //var roughObjSize = JSON.stringify(res.data.data).length;
                 //console.log(res.data.length);
                 resolve(this.constructor.name)

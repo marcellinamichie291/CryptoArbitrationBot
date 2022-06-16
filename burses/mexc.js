@@ -5,7 +5,7 @@ const fse = require('fs-extra');
 class Mexc extends(bu){
     
     pairs = new Array();
-    prieces = new Array();
+    prices = new Array();
 
     parsePairs() {
         console.log("parsePairs Mexc")
@@ -42,9 +42,9 @@ class Mexc extends(bu){
                 //fse.outputJsonSync('./tickers_mexc.json', res.data);
                 for(const ticker of res.data.data)
                 {
-                    this.prieces.push({pair: ticker.symbol, last_priece: ticker.last})
+                    this.prices.push({pair: ticker.symbol, last_price: ticker.last})
                 }
-                //console.dir(this.prieces)
+                //console.dir(this.prices)
                 //var roughObjSize = JSON.stringify(res.data.data).length;
                 //console.log(res.data.length);
                 resolve(this.constructor.name)

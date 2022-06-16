@@ -5,7 +5,7 @@ const fse = require('fs-extra');
 class Bitmart extends(bu){
 
     pairs = new Array();
-    prieces = new Array();
+    prices = new Array();
 
     parsePairs() {
         console.log("parsePairs Bitmart")
@@ -41,9 +41,9 @@ class Bitmart extends(bu){
                 //fse.outputJsonSync('./tickers_bitmart.json', res.data);
                 for(const ticker of res.data.data.tickers)
                 {
-                    this.prieces.push({pair: ticker.symbol, last_priece: ticker.last_price})
+                    this.prices.push({pair: ticker.symbol, last_price: ticker.last_price})
                 }
-                //console.dir(this.prieces)
+                //console.dir(this.prices)
                 //var roughObjSize = JSON.stringify(res.data.data).length;
                 //console.log(res.data.data.tickers.length);
                 resolve(this.constructor.name)

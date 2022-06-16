@@ -2,7 +2,7 @@ const he = require('./helper')
 const bm = require('./burses/bitmart')
 const gi = require('./burses/gateio')
 const me = require('./burses/mexc')
-const BursesComparator = require('./bursesPrieceComparator')
+const BursesComparator = require('./BursesPriceComparator')
 
 function sleep(ms) {
   return new Promise((resolve) => {

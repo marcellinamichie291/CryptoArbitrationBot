@@ -1,7 +1,7 @@
 const he = require('./helper')
 const bm = require('./burses/bitmart')
 const gi = require('./burses/gateio')
-const Burse = require('./burses/Burse')
+const me = require('./burses/mexc')
 const BursesComparator = require('./bursesPrieceComparator')
 
 function sleep(ms) {
@@ -13,6 +13,7 @@ function sleep(ms) {
 var burses = []; 
 burses.push(new bm())
 burses.push(new gi())
+burses.push(new me())
 
 bc = new BursesComparator(burses);
 bc.compare();

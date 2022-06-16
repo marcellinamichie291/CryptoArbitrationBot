@@ -13,7 +13,6 @@ class Bitmart extends(bu){
         axios
         .get('https://api-cloud.bitmart.com/spot/v1/symbols')
         .then(res => {
-            console.log(`statusCode: ${res.status}`);
             for(const pair of res.data.data.symbols)
             {
                 var currencies = pair.split('_')
@@ -21,13 +20,10 @@ class Bitmart extends(bu){
                 //    console.log(split);
                 var value = {from: currencies[0], to: currencies[1]}
                 this.pairs.push(value)
-
-                if(value.from === "USDT")
-                    console.log(value)
             }
             //console.dir(this.pairs)
             //var roughObjSize = JSON.stringify(res.data.data).length;
-            console.log(res.data.data.symbols.length);
+            console.log("Bitmart found pairs: " + res.data.data.symbols.length);
         })
         .catch(error => {
             console.error(error);

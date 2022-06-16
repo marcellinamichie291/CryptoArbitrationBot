@@ -39,8 +39,20 @@ class BursesPrieceComparator {
     }
 
     beginCompare() {
-        for(const priece1 of this.burses[1].prieces) {
-            for(const priece0 of this.burses[0].prieces) {
+
+        // for(const base_burse of this.burses) {
+
+        //     for(const search_burse of this.burses) {
+        //         if(search_burse.constructor.name == base_burse.constructor.name)
+        //             continue
+                
+        //     }
+        // }
+
+        var indexBurseOne = 1
+        var indexBurseTwo = 0
+        for(const priece1 of this.burses[indexBurseOne].prieces) {
+            for(const priece0 of this.burses[indexBurseTwo].prieces) {
 
                 if(priece1.pair === priece0.pair && priece0.pair.includes("_USDT"))
                 {
@@ -49,26 +61,20 @@ class BursesPrieceComparator {
                     var onePercent = maximum / 100
                     //diff = maximum - minimum;
                     var diff = 100-((minimum / maximum)*100)
-
+                    var lowerPriece
+                    if(priece0.last_priece < priece1.last_priece)
+                        lowerPriece = this.burses[indexBurseTwo].constructor.name
+                    else
+                        lowerPriece = this.burses[indexBurseOne].constructor.name
                     //diff = priece0.last_priece - 
-                    var prieceDifference = {pair: priece0.pair, difference: diff}
-                    this.prieceDifferences.push(prieceDifference)
+                    var prieceDifference = {pair: priece0.pair, diff: diff, lower: lowerPriece }//, priece: minimum}
+                    if(diff > 0.5 && diff < 50)
+                        this.prieceDifferences.push(prieceDifference)
                 }
-                // if(priece.pair.includes("_USDT"))
-                // {
-                //     console.log(priece)
-                //     this.usdtArray.push(priece)
-                // }
             }
-            // if(priece.pair.includes("_USDT"))
-            // {
-            //     console.log(priece)
-            //     this.usdtArray.push(priece)
-            // }
         }
-        //console.log("FOUND: " + this.usdtArray.length)
-
-        this.prieceDifferences.sort((a, b) => b.difference - a.difference)
+        // sort by deifference
+        this.prieceDifferences.sort((a, b) => b.diff - a.diff)
         console.dir(this.prieceDifferences)
     }
 }

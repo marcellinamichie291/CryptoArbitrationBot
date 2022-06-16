@@ -2,27 +2,30 @@ bu = require("./Burse")
 const axios = require('axios');
 const fse = require('fs-extra');
 
-class Gateio extends(bu){
+class Mexc extends(bu){
     
     pairs = new Array();
     prieces = new Array();
 
     parsePairs() {
-        console.log("parsePairs Gateio")
+        console.log("parsePairs Mexc")
 
         axios
-        .get('https://api.gateio.ws/api/v4/spot/currency_pairs')
+        .get('https://www.mexc.com/open/api/v2/market/symbols')
         .then(res => {
           //console.dir(res.data)
           //fse.outputJsonSync('./file.json', res.data); 
-          for(const pair_obj of res.data)
+          for(const pair_obj of res.data.data)
           {
-              var value = {from: pair_obj.base, to: pair_obj.quote}
-              this.pairs.push(value)
+            var currencies = pair_obj.symbol.split('_')
+            //for(const split of currencies)
+            //    console.log(split);
+            var value = {from: currencies[0], to: currencies[1]}
+            this.pairs.push(value)
           }
           //console.dir(this.pairs)
           //var roughObjSize = JSON.stringify(res.data).length;
-          console.log("Gateio found pairs: " + res.data.length);
+          console.log("Mexc found pairs: " + res.data.data.length);
         })
         .catch(error => {
           console.error(error);
@@ -30,16 +33,16 @@ class Gateio extends(bu){
     }
 
     getTickers() {
-        console.log("getTickers Gateio")
+        console.log("getTickers Mexc")
         return new Promise((resolve, reject) => {
             axios
-            .get('https://api.gateio.ws/api/v4/spot/tickers')
+            .get('https://www.mexc.com/open/api/v2/market/ticker')
             .then(res => {
                 //console.log(`statusCode: ${res.status}`);
-                //fse.outputJsonSync('./tickers_gateio.json', res.data);
-                for(const ticker of res.data)
+                //fse.outputJsonSync('./tickers_mexc.json', res.data);
+                for(const ticker of res.data.data)
                 {
-                    this.prieces.push({pair: ticker.currency_pair, last_priece: ticker.last})
+                    this.prieces.push({pair: ticker.symbol, last_priece: ticker.last})
                 }
                 //console.dir(this.prieces)
                 //var roughObjSize = JSON.stringify(res.data.data).length;
@@ -54,4 +57,4 @@ class Gateio extends(bu){
     }
 }
 
-module.exports = Gateio // 👈 Export class
+module.exports = Mexc // 👈 Export class

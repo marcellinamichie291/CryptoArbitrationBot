@@ -11,7 +11,11 @@
     }
   
     parsePairs() {
-      throw new Error("Method 'say()' must be implemented.");
+      throw new Error("Method 'parsePairs()' must be implemented.");
+    }
+
+    getTickers() {
+      throw new Error("Method 'getTickers()' must be implemented.");
     }
   }
 

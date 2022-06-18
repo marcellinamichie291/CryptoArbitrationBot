@@ -55,6 +55,10 @@ class Mexc extends(bu){
             });
         })
     }
+
+    getTickersTimeoutInterval() {
+        return 8000;
+    }
 }
 
 module.exports = Mexc // 👈 Export class

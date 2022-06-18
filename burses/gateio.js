@@ -52,6 +52,10 @@ class Gateio extends(bu){
             });
         })
     }
+
+    getTickersTimeoutInterval() {
+        return 20000;
+    }
 }
 
 module.exports = Gateio // 👈 Export class

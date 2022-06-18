@@ -17,6 +17,10 @@
     getTickers() {
       throw new Error("Method 'getTickers()' must be implemented.");
     }
+
+    getTickersTimeoutInterval() {
+      throw new Error("Method 'getTickersTimeoutInterval()' must be implemented.");
+    }
   }
 
   module.exports = Burse // 👈 Export class

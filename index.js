@@ -11,10 +11,17 @@ burses.push(new bm())
 burses.push(new gi())
 burses.push(new me())
 
-timeout.timeoutAfter(10);
+var msTimeoutTotal = 0
+for(const burse of burses)
+    msTimeoutTotal += burse.getTickersTimeoutInterval()
+
+//timeout.timeoutAfter(msTimeoutTotal/1000 + 2)
+timeout.timeoutAfter(5)
 
 priceDifferences = new Array()
 tickersComparefinishedCallback = function(pairsArray) {
+
+  priceDifferences = []
   for(var pair of pairsArray)
   {
       if(pair.burses.length < 2)
@@ -41,9 +48,8 @@ tickersComparefinishedCallback = function(pairsArray) {
 
    // sort by deifference
   priceDifferences.sort((a, b) => b.diff - a.diff)
-  //console.dir(this.priceDifferences)
 
-  for(const diff of this.priceDifferences)
+  for(const diff of priceDifferences)
   {
       if(diff.diff > 1 && diff.diff < 50)
           console.log(diff.pair + " " + diff.highest + " " + diff.lowest + " " + diff.diff )
@@ -53,7 +59,8 @@ tickersComparefinishedCallback = function(pairsArray) {
 bc = new BursesComparator(burses, tickersComparefinishedCallback);
 
 function runFunc() {
-  bc.compare();
+  if(bc.compare() === false)
+    console.log("FAILED TO START COMPARE")
 }
 
 //helper.timeoutAfter(1)

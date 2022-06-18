@@ -1,7 +1,10 @@
 class BursesPriceComparator {
+
     buyPairsToCompare = new Array("", "a");
 
     receivedTickers = new Array();
+    foundAllTickers = false
+    compareInProgress = false
 
     constructor(burses, callback){
         this.burses = burses
@@ -9,13 +12,24 @@ class BursesPriceComparator {
     }
 
     compare() {
+        if(this.compareInProgress)
+            return false
+
+        this.compareInProgress = true
+
         for(const burse of this.burses) {
             burse.parsePairs();
             burse.getTickers().then(res => this.onTickersReceived(res))
                               .catch(error => { console.error("FAILED TO GET TICKERS " + error); });
         }
 
-        setTimeout(res => this.onTicketsReceiveTimeout(), this.burses.length*3000);
+        var msTimeoutTotal = 0
+        for(const burse of this.burses)
+            msTimeoutTotal += burse.getTickersTimeoutInterval()
+
+        setTimeout(res => this.onTicketsReceiveTimeout(), msTimeoutTotal);
+
+        return true
     }
 
     onTickersReceived(res)
@@ -25,10 +39,18 @@ class BursesPriceComparator {
         if(this.receivedTickers.length === this.burses.length) {
             console.log("GET TICKERS SUCCESSFUL")
             this.beginCompare()
+            this.foundAllTickers = true
+            this.receivedTickers = []
         }
     }
 
     onTicketsReceiveTimeout() {
+        if(this.foundAllTickers === true)
+        {
+            this.foundAllTickers = false
+            return
+        }
+        
         if(this.receivedTickers.length !== this.burses.length) {
             console.error("FAILED TO GET TICKERS CORRECTLY RECEIVED: " + this.receivedTickers.length + " OF " + this.burses.length)
             this.beginCompare()
@@ -87,6 +109,8 @@ class BursesPriceComparator {
         }
 
        this.finishedCallback(this.pairsArray)
+
+       this.compareInProgress = false
 
         // var indexBurseOne = 1
         // var indexBurseTwo = 0

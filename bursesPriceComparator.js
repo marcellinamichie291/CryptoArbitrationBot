@@ -29,16 +29,17 @@ class BursesPriceComparator {
 
     onTicketsReceiveTimeout() {
         if(this.receivedTickers.length !== this.burses.length) {
-            console.error("FAILED TO GET ALL TICKERS RECEIVED: " + this.receivedTickers.length + " OF " + this.burses.length)
+            console.error("FAILED TO GET TICKERS CORRECTLY RECEIVED: " + this.receivedTickers.length + " OF " + this.burses.length)
             this.beginCompare()
-            this.receivedTickers = [];
+            this.receivedTickers = []
         }
     }
 
     pairsArray = new Array()
     priceDifferences = new Array()
     beginCompare() {
-
+        this.pairsArray = []
+        this.priceDifferences = []
         for(const burse of this.burses)
         {
             for(const burse_price of burse.prices) 
@@ -112,11 +113,11 @@ class BursesPriceComparator {
         this.priceDifferences.sort((a, b) => b.diff - a.diff)
         //console.dir(this.priceDifferences)
 
-        for(const diff of this.priceDifferences)
-        {
-            if(diff.diff > 1 && diff.diff < 50)
-                console.log(diff.pair + " " + diff.highest + " " + diff.lowest + " " + diff.diff )
-        }
+        //for(const diff of this.priceDifferences)
+        //{
+        //    if(diff.diff > 1 && diff.diff < 50)
+        //        console.log(diff.pair + " " + diff.highest + " " + diff.lowest + " " + diff.diff )
+        //}
 
         // var indexBurseOne = 1
         // var indexBurseTwo = 0

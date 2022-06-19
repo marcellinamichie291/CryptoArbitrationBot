@@ -75,7 +75,7 @@ class BursesPriceComparator {
             {
                 var exists = false
                 var pair = ''
-                if(burse_price.pair.includes("_USDT") == false)
+                if(burse_price.pair.includes("_USDT") == false || burse_price.pair.includes("3") ||burse_price.pair.includes("5"))
                     continue
                 for(const array_price of this.pairsArray)
                 {

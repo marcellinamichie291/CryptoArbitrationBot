@@ -80,10 +80,9 @@ class Bitmart extends(bu){
     }
 
     getDepth(pair, precision = 6) {
-        var depth
         console.log("getDepth Bitmart")
         return new Promise((resolve, reject) => {
-            getDepthRequest = "https://api-cloud.bitmart.com/spot/v1/symbols/book?symbol="
+            var getDepthRequest = "https://api-cloud.bitmart.com/spot/v1/symbols/book?symbol="
             getDepthRequest += pair
             getDepthRequest += "&precision="
             getDepthRequest += precision
@@ -102,7 +101,6 @@ class Bitmart extends(bu){
                 reject(error)
             });
         })  
-        return depth
     }
 }
 

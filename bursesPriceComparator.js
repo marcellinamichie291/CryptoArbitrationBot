@@ -64,15 +64,6 @@ class BursesPriceComparator {
     onTickerReceived(res)
     {
         this.receivedTickers.push(res)
-        //console.log(res)
-        // this.receivedTickers.push(res)
-
-        // if(this.receivedTickers.length === this.burses.length) {
-        //     console.log("GET TICKERS SUCCESSFUL")
-        //     this.beginCompare()
-        //     this.foundAllTickers = true
-        //     this.receivedTickers = []
-        // }
     }
 
     onTickerReceiveTimeout() {

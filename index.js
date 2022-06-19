@@ -13,6 +13,11 @@ burses.push(new bm())
 burses.push(new gi())
 burses.push(new me())
 
+//burses[0].getDepth("CFX_USDT")
+burses[1].getDepth("CFX_USDT").then(res => {
+  console.log(res)
+})
+
 tickersComparefinishedCallback = function(priceDifferences) {
   printDifferences(priceDifferences)
 }

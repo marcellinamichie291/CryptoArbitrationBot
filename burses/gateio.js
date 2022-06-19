@@ -75,6 +75,46 @@ class Gateio extends(bu){
     getTickersTimeoutInterval() {
         return 24000;
     }
+
+    getDepth(pair, precision = 12) {
+        console.log("getDepth Bitmart")
+        var asksDepth = new Array();
+        var bidsDepth = new Array();
+        return new Promise((resolve, reject) => {
+            var getDepthRequest = "https://api.gateio.ws/api/v4/spot/order_book?currency_pair="
+            getDepthRequest += pair
+            getDepthRequest += "&limit="
+            getDepthRequest += precision
+            axios
+            .get(getDepthRequest)
+            .then(res => {
+                for(const ask of res.data.asks) {
+                    asksDepth.push({price: ask[0], amount: ask[1]})
+                }
+                for(const bid of res.data.bids) {
+                    bidsDepth.push({price: bid[0], amount: bid[1]})
+                }
+                var depthOfPair = {pair: pair, burse: this.constructor.name, asks: asksDepth, binds: bidsDepth}
+                
+                // {
+                //     pair: 'CFX_USDT',
+                //     burse: 'Gateio',
+                //     asks: [
+                //       { price: '0.051209', amount: '116.7' },
+                //     ],
+                //     binds: [
+                //       { price: '0.051062', amount: '4700' },
+                //     ]
+                //   }
+
+                resolve(depthOfPair)
+            })
+            .catch(error => {
+                console.error(error);
+                reject(error)
+            });
+        })  
+    }
 }
 
 module.exports = Gateio // 👈 Export class

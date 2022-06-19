@@ -78,6 +78,30 @@ class Mexc extends(bu){
     getTickersTimeoutInterval() {
         return 12000;
     }
+
+    getDepth(pair, precision = 12) {
+        console.log("getDepth Mexc")
+        return new Promise((resolve, reject) => {
+            var getDepthRequest = "https://www.mexc.com//open/api/v2/market/depth?symbol="
+            getDepthRequest += pair
+            getDepthRequest += "&depth="
+            getDepthRequest += precision
+            axios
+            .get(getDepthRequest)
+            .then(res => {
+                //console.log(`statusCode: ${res.status}`);
+                //fse.outputJsonSync('./tickers_bitmart.json', res.data);
+                console.log(res.data)
+                //var roughObjSize = JSON.stringify(res.data.data).length;
+                //console.log(res.data.data.tickers.length);
+                resolve(this.constructor.name)
+            })
+            .catch(error => {
+                console.error(error);
+                reject(error)
+            });
+        })  
+    }
 }
 
 module.exports = Mexc // 👈 Export class

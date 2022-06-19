@@ -4,9 +4,6 @@ const fse = require('fs-extra');
 
 class Mexc extends(bu){
     
-    pairs = new Array();
-    prices = new Array();
-
     parsePairs() {
         console.log("parsePairs Mexc")
 
@@ -48,6 +45,28 @@ class Mexc extends(bu){
                 //var roughObjSize = JSON.stringify(res.data.data).length;
                 //console.log(res.data.length);
                 resolve(this.constructor.name)
+            })
+            .catch(error => {
+                console.error(error);
+                reject(error)
+            });
+        })
+    }
+
+    getTicker(pair) {   
+        console.log("getTicker Mexc")
+        return new Promise((resolve, reject) => {
+            var tickerRequest = 'https://www.mexc.com/open/api/v2/market/ticker?symbol='
+            tickerRequest += pair
+            axios
+            .get(tickerRequest)
+            .then(res => {
+                var pair;
+                for(const ticker of res.data.data)
+                {
+                    pair = {burse: this.constructor.name, pair: ticker.symbol, last_price: ticker.last}
+                }
+                resolve(pair)
             })
             .catch(error => {
                 console.error(error);

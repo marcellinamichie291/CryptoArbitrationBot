@@ -4,6 +4,8 @@ const gi = require('./burses/gateio')
 const me = require('./burses/mexc')
 const BursesComparator = require('./BursesPriceComparator')
 
+pairsToCompare = new Array("CFX_USDT", "DOG_USDT");
+
 timeout = new he(onTimeout)
 
 var burses = []; 
@@ -21,6 +23,7 @@ function printDifferences(priceDifferences) {
       if(diff.diff > 1 && diff.diff < 50)
           console.log(diff.pair + " " + diff.highest + " " + diff.lowest + " " + diff.diff )
   }
+
 }
 
 bc = new BursesComparator(burses, tickersComparefinishedCallback);
@@ -28,5 +31,5 @@ bc = new BursesComparator(burses, tickersComparefinishedCallback);
 timeout.timeoutAfter(1)
 
 function onTimeout() {
-  bc.compare()
+  bc.compare(pairsToCompare)
 }

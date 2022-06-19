@@ -4,9 +4,6 @@ const fse = require('fs-extra');
 
 class Bitmart extends(bu){
 
-    pairs = new Array();
-    prices = new Array();
-
     parsePairs() {
         console.log("parsePairs Bitmart")
 
@@ -55,8 +52,57 @@ class Bitmart extends(bu){
         })
     }
 
+    getTicker(pair) {   
+        console.log("getTicker Bitmart")
+        return new Promise((resolve, reject) => {
+            var tickerRequest = 'https://api-cloud.bitmart.com/spot/v1/ticker?symbol='
+            tickerRequest += pair
+            axios
+            .get(tickerRequest)
+            .then(res => {
+                var pair;
+                for(const ticker of res.data.data.tickers)
+                {
+                    pair = {burse: this.constructor.name, pair: ticker.symbol, last_price: ticker.last_price}
+                }
+
+                resolve(pair)
+            })
+            .catch(error => {
+                //console.error(error);
+                reject(error)
+            });
+        })
+    }
+
     getTickersTimeoutInterval() {
         return 3000;
+    }
+
+    getDepth(pair, precision = 6) {
+        var depth
+        console.log("getDepth Bitmart")
+        return new Promise((resolve, reject) => {
+            getDepthRequest = "https://api-cloud.bitmart.com/spot/v1/symbols/book?symbol="
+            getDepthRequest += pair
+            getDepthRequest += "&precision="
+            getDepthRequest += precision
+            axios
+            .get(getDepthRequest)
+            .then(res => {
+                //console.log(`statusCode: ${res.status}`);
+                //fse.outputJsonSync('./tickers_bitmart.json', res.data);
+                console.dir(res.data)
+                //var roughObjSize = JSON.stringify(res.data.data).length;
+                //console.log(res.data.data.tickers.length);
+                resolve(this.constructor.name)
+            })
+            .catch(error => {
+                console.error(error);
+                reject(error)
+            });
+        })  
+        return depth
     }
 }
 

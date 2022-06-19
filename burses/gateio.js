@@ -3,9 +3,6 @@ const axios = require('axios');
 const fse = require('fs-extra');
 
 class Gateio extends(bu){
-    
-    pairs = new Array();
-    prices = new Array();
 
     parsePairs() {
         console.log("parsePairs Gateio")
@@ -45,6 +42,28 @@ class Gateio extends(bu){
                 //var roughObjSize = JSON.stringify(res.data.data).length;
                 //console.log(res.data.length);
                 resolve(this.constructor.name)
+            })
+            .catch(error => {
+                console.error(error);
+                reject(error)
+            });
+        })
+    }
+
+    getTicker(pair) {   
+        console.log("getTicker Gateio")
+        return new Promise((resolve, reject) => {
+            var tickerRequest = 'https://api.gateio.ws/api/v4/spot/tickers?currency_pair='
+            tickerRequest += pair
+            axios
+            .get(tickerRequest)
+            .then(res => {
+                var pair;
+                for(const ticker of res.data)
+                {
+                    pair = {burse: this.constructor.name, pair: ticker.currency_pair, last_price: ticker.last}
+                }
+                resolve(pair)
             })
             .catch(error => {
                 console.error(error);

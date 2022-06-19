@@ -4,19 +4,12 @@ const gi = require('./burses/gateio')
 const me = require('./burses/mexc')
 const BursesComparator = require('./BursesPriceComparator')
 
-timeout = new he(runFunc)
+timeout = new he(onTimeout)
 
 var burses = []; 
 burses.push(new bm())
 burses.push(new gi())
 burses.push(new me())
-
-var msTimeoutTotal = 0
-for(const burse of burses)
-    msTimeoutTotal += burse.getTickersTimeoutInterval()
-
-//timeout.timeoutAfter(msTimeoutTotal/1000 + 2)
-timeout.timeoutAfter(5)
 
 priceDifferences = new Array()
 tickersComparefinishedCallback = function(pairsArray) {
@@ -58,7 +51,9 @@ tickersComparefinishedCallback = function(pairsArray) {
 
 bc = new BursesComparator(burses, tickersComparefinishedCallback);
 
-function runFunc() {
+timeout.timeoutAfter(bc.msTimeoutTotal/1000 + 2)
+
+function onTimeout() {
   if(bc.compare() === false)
     console.log("FAILED TO START COMPARE")
 }

@@ -5,10 +5,14 @@ class BursesPriceComparator {
     receivedTickers = new Array();
     foundAllTickers = false
     compareInProgress = false
+    msTimeoutTotal = 0
 
     constructor(burses, callback){
         this.burses = burses
         this.finishedCallback = callback
+
+        for(const burse of this.burses)
+            this.msTimeoutTotal += burse.getTickersTimeoutInterval()
     }
 
     compare() {
@@ -23,11 +27,7 @@ class BursesPriceComparator {
                               .catch(error => { console.error("FAILED TO GET TICKERS " + error); });
         }
 
-        var msTimeoutTotal = 0
-        for(const burse of this.burses)
-            msTimeoutTotal += burse.getTickersTimeoutInterval()
-
-        setTimeout(res => this.onTicketsReceiveTimeout(), msTimeoutTotal);
+        setTimeout(res => this.onTicketsReceiveTimeout(), this.msTimeoutTotal);
 
         return true
     }

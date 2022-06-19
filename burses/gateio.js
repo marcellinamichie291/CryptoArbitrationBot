@@ -54,7 +54,7 @@ class Gateio extends(bu){
     }
 
     getTickersTimeoutInterval() {
-        return 20000;
+        return 15000; // if use 2 sec per 600 pairs is low, 15 sec minimum in this case maybe 20sec for slow PC
     }
 }
 

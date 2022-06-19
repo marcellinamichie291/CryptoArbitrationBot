@@ -51,11 +51,8 @@ tickersComparefinishedCallback = function(pairsArray) {
 
 bc = new BursesComparator(burses, tickersComparefinishedCallback);
 
-timeout.timeoutAfter(bc.msTimeoutTotal/1000 + 2)
+timeout.timeoutAfter(1)
 
 function onTimeout() {
-  if(bc.compare() === false)
-    console.log("FAILED TO START COMPARE")
+  bc.compare()
 }
-
-//helper.timeoutAfter(1)

@@ -108,37 +108,35 @@ class BursesPriceComparator {
             }
         }
 
-       this.finishedCallback(this.pairsArray)
+        for(var pair of this.pairsArray)
+        {
+            if(pair.burses.length < 2)
+                continue
+            
+            var lowestBurse, lowestPrice = Math.floor(Number.MAX_SAFE_INTEGER)
+            var highestBurse, highestPrice = Math.floor(Number.MIN_SAFE_INTEGER)
+            for(const burse of pair.burses)
+            {
+                if(lowestPrice > burse.price)
+                {
+                    lowestBurse = burse.burse
+                    lowestPrice = burse.price
+                }
+                if(highestPrice < burse.price)
+                {
+                    highestBurse = burse.burse
+                    highestPrice = burse.price
+                }
+            }
+            var diff = 100-((lowestPrice / highestPrice)*100)
+            this.priceDifferences.push({pair: pair.pair, highest: highestBurse, lowest: lowestBurse, diff: diff})
+        }
+      
+        this.priceDifferences.sort((a, b) => b.diff - a.diff)
 
-       this.compareInProgress = false
+        this.compareInProgress = false
 
-        // var indexBurseOne = 1
-        // var indexBurseTwo = 0
-        // for(const price1 of this.burses[indexBurseOne].prices) {
-        //     for(const price0 of this.burses[indexBurseTwo].prices) {
-
-        //         if(price1.pair === price0.pair && price0.pair.includes("_USDT"))
-        //         {
-        //             var maximum = Math.max(price0.last_price, price1.last_price)
-        //             var minimum = Math.min(price0.last_price, price1.last_price)
-        //             var onePercent = maximum / 100
-        //             //diff = maximum - minimum;
-        //             var diff = 100-((minimum / maximum)*100)
-        //             var lowerPrice
-        //             if(price0.last_price < price1.last_price)
-        //                 lowerPrice = this.burses[indexBurseTwo].constructor.name
-        //             else
-        //                 lowerPrice = this.burses[indexBurseOne].constructor.name
-        //             //diff = price0.last_price - 
-        //             var priceDifference = {pair: price0.pair, diff: diff, lower: lowerPrice }//, price: minimum}
-        //             if(diff > 0.5 && diff < 50)
-        //                 this.priceDifferences.push(priceDifference)
-        //         }
-        //     }
-        // }
-        // // sort by deifference
-        // this.priceDifferences.sort((a, b) => b.diff - a.diff)
-        // console.dir(this.priceDifferences)
+        this.finishedCallback(this.priceDifferences)
     }
 }
 

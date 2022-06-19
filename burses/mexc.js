@@ -57,7 +57,7 @@ class Mexc extends(bu){
     }
 
     getTickersTimeoutInterval() {
-        return 8000;
+        return 12000;
     }
 }
 

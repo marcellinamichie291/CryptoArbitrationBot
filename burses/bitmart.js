@@ -56,7 +56,7 @@ class Bitmart extends(bu){
     }
 
     getTickersTimeoutInterval() {
-        return 2000;
+        return 3000;
     }
 }
 

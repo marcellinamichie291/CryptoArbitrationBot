@@ -9,10 +9,6 @@
         throw new Error("Abstract classes can't be instantiated.");
       }
     }
-  
-    parsePairs() {
-      throw new Error("Method 'parsePairs()' must be implemented.");
-    }
 
     getTickers() {
       throw new Error("Method 'getTickers()' must be implemented.");
@@ -20,6 +16,10 @@
 
     getTickersTimeoutInterval() {
       throw new Error("Method 'getTickersTimeoutInterval()' must be implemented.");
+    }
+
+    getDepth(pair) {
+      
     }
   }
 

@@ -6,6 +6,7 @@ class BursesPriceComparator {
     foundAllTickers = false
     compareInProgress = false
     msTimeoutTotal = 0
+    tickersTimeoutTimerHandler = 0
 
     constructor(burses, callback){
         this.burses = burses
@@ -18,6 +19,13 @@ class BursesPriceComparator {
     compare() {
         if(this.compareInProgress)
             return false
+  
+        if(this.tickersTimeoutTimerHandler)
+        {
+            clearTimeout(this.tickersTimeoutTimerHandler)
+            this.tickersTimeoutTimerHandler = 0
+        }
+        this.tickersTimeoutTimerHandler = setTimeout(res => this.onTicketsReceiveTimeout(), this.msTimeoutTotal);
 
         this.compareInProgress = true
 
@@ -26,8 +34,6 @@ class BursesPriceComparator {
             burse.getTickers().then(res => this.onTickersReceived(res))
                               .catch(error => { console.error("FAILED TO GET TICKERS " + error); });
         }
-
-        setTimeout(res => this.onTicketsReceiveTimeout(), this.msTimeoutTotal);
 
         return true
     }

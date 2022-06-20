@@ -79,8 +79,10 @@ class Bitmart extends(bu){
         return 3000;
     }
 
-    getDepth(pair, precision = 6) {
+    getDepth(pair, precision = 5) {
         console.log("getDepth Bitmart")
+        var asksDepth = new Array();
+        var bidsDepth = new Array();
         return new Promise((resolve, reject) => {
             var getDepthRequest = "https://api-cloud.bitmart.com/spot/v1/symbols/book?symbol="
             getDepthRequest += pair
@@ -89,12 +91,14 @@ class Bitmart extends(bu){
             axios
             .get(getDepthRequest)
             .then(res => {
-                //console.log(`statusCode: ${res.status}`);
-                //fse.outputJsonSync('./tickers_bitmart.json', res.data);
-                console.dir(res.data)
-                //var roughObjSize = JSON.stringify(res.data.data).length;
-                //console.log(res.data.data.tickers.length);
-                resolve(this.constructor.name)
+                for(const ask of res.data.data.buys) {
+                    asksDepth.push({price: ask.price, amount: ask.total})
+                }
+                for(const bid of res.data.data.sells) {
+                    bidsDepth.push({price: bid.price, amount: bid.total})
+                }
+                var depthOfPair = {pair: pair, burse: this.constructor.name, asks: asksDepth, binds: bidsDepth}
+                resolve(depthOfPair)
             })
             .catch(error => {
                 console.error(error);

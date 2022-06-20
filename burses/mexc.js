@@ -78,9 +78,20 @@ class Mexc extends(bu){
     getTickersTimeoutInterval() {
         return 12000;
     }
-
+    // {
+    //     pair: 'CFX_USDT',
+    //     burse: 'Gateio',
+    //     asks: [
+    //       { price: '0.051209', amount: '116.7' },
+    //     ],
+    //     binds: [
+    //       { price: '0.051062', amount: '4700' },
+    //     ]
+    //   }
     getDepth(pair, precision = 12) {
         console.log("getDepth Mexc")
+        var asksDepth = new Array();
+        var bidsDepth = new Array();
         return new Promise((resolve, reject) => {
             var getDepthRequest = "https://www.mexc.com//open/api/v2/market/depth?symbol="
             getDepthRequest += pair
@@ -89,12 +100,14 @@ class Mexc extends(bu){
             axios
             .get(getDepthRequest)
             .then(res => {
-                //console.log(`statusCode: ${res.status}`);
-                //fse.outputJsonSync('./tickers_bitmart.json', res.data);
-                console.log(res.data)
-                //var roughObjSize = JSON.stringify(res.data.data).length;
-                //console.log(res.data.data.tickers.length);
-                resolve(this.constructor.name)
+                for(const ask of res.data.data.asks) {
+                    asksDepth.push({price: ask.price, amount: ask.quantity})
+                }
+                for(const bid of res.data.data.bids) {
+                    bidsDepth.push({price: bid.price, amount: bid.quantity})
+                }
+                var depthOfPair = {pair: pair, burse: this.constructor.name, asks: asksDepth, binds: bidsDepth}
+                resolve(depthOfPair)
             })
             .catch(error => {
                 console.error(error);

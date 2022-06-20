@@ -13,8 +13,13 @@ burses.push(new bm())
 burses.push(new gi())
 burses.push(new me())
 
-//burses[0].getDepth("CFX_USDT")
+burses[0].getDepth("CFX_USDT").then(res => {
+  console.log(res)
+})
 burses[1].getDepth("CFX_USDT").then(res => {
+  console.log(res)
+})
+burses[2].getDepth("CFX_USDT").then(res => {
   console.log(res)
 })
 

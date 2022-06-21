@@ -94,7 +94,7 @@ class Gateio extends(bu){
                 for(const bid of res.data.bids) {
                     bidsDepth.push({price: bid[0], amount: bid[1]})
                 }
-                var depthOfPair = {pair: pair, burse: this.constructor.name, asks: asksDepth, binds: bidsDepth}
+                var depthOfPair = {pair: pair, burse: this.constructor.name, asks: asksDepth, bids: bidsDepth}
                 
                 // {
                 //     pair: 'CFX_USDT',

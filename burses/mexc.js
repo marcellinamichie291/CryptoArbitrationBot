@@ -106,7 +106,7 @@ class Mexc extends(bu){
                 for(const bid of res.data.data.bids) {
                     bidsDepth.push({price: bid.price, amount: bid.quantity})
                 }
-                var depthOfPair = {pair: pair, burse: this.constructor.name, asks: asksDepth, binds: bidsDepth}
+                var depthOfPair = {pair: pair, burse: this.constructor.name, asks: asksDepth, bids: bidsDepth}
                 resolve(depthOfPair)
             })
             .catch(error => {

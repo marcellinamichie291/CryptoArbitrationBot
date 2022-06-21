@@ -97,7 +97,7 @@ class Bitmart extends(bu){
                 for(const bid of res.data.data.sells) {
                     bidsDepth.push({price: bid.price, amount: bid.total})
                 }
-                var depthOfPair = {pair: pair, burse: this.constructor.name, asks: asksDepth, binds: bidsDepth}
+                var depthOfPair = {pair: pair, burse: this.constructor.name, asks: asksDepth, bids: bidsDepth}
                 resolve(depthOfPair)
             })
             .catch(error => {

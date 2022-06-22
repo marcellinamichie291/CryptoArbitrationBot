@@ -5,7 +5,7 @@ const fse = require('fs-extra');
 class Mexc extends(bu){
     
     parsePairs() {
-        console.log("parsePairs Mexc")
+       // console.log("parsePairs Mexc")
 
         axios
         .get('https://www.mexc.com/open/api/v2/market/symbols')
@@ -30,7 +30,7 @@ class Mexc extends(bu){
     }
 
     getTickers() {
-        console.log("getTickers Mexc")
+       // console.log("getTickers Mexc")
         return new Promise((resolve, reject) => {
             axios
             .get('https://www.mexc.com/open/api/v2/market/ticker')
@@ -54,7 +54,7 @@ class Mexc extends(bu){
     }
 
     getTicker(pair) {   
-        console.log("getTicker Mexc")
+       // console.log("getTicker Mexc")
         return new Promise((resolve, reject) => {
             var tickerRequest = 'https://www.mexc.com/open/api/v2/market/ticker?symbol='
             tickerRequest += pair
@@ -89,7 +89,7 @@ class Mexc extends(bu){
     //     ]
     //   }
     getDepth(pair, precision = 12) {
-        console.log("getDepth Mexc")
+       // console.log("getDepth Mexc")
         var asksDepth = new Array();
         var bidsDepth = new Array();
         return new Promise((resolve, reject) => {

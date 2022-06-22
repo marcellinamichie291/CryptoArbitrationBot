@@ -5,7 +5,7 @@ const fse = require('fs-extra');
 class Bitmart extends(bu){
 
     parsePairs() {
-        console.log("parsePairs Bitmart")
+        //console.log("parsePairs Bitmart")
 
         axios
         .get('https://api-cloud.bitmart.com/spot/v1/symbols')
@@ -29,7 +29,7 @@ class Bitmart extends(bu){
     } 
 
     getTickers() {   
-        console.log("getTickers Bitmart")
+        //console.log("getTickers Bitmart")
         return new Promise((resolve, reject) => {
             axios
             .get('https://api-cloud.bitmart.com/spot/v1/ticker')
@@ -53,7 +53,7 @@ class Bitmart extends(bu){
     }
 
     getTicker(pair) {   
-        console.log("getTicker Bitmart")
+        //console.log("getTicker Bitmart")
         return new Promise((resolve, reject) => {
             var tickerRequest = 'https://api-cloud.bitmart.com/spot/v1/ticker?symbol='
             tickerRequest += pair
@@ -80,7 +80,7 @@ class Bitmart extends(bu){
     }
 
     getDepth(pair, precision = 5) {
-        console.log("getDepth Bitmart")
+        //console.log("getDepth Bitmart")
         var asksDepth = new Array();
         var bidsDepth = new Array();
         return new Promise((resolve, reject) => {

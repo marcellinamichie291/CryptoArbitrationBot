@@ -5,7 +5,7 @@ const me = require('./burses/mexc')
 const BursesComparator = require('./BursesPriceComparator')
 const PairsDepthComparator = require('./PairsDepthComparator')
 
-pairsToCompare = new Array("CFX_USDT", "DOG_USDT");
+pairsToCompare = new Array("CFX_USDT", "KABY_USDT");
 
 timeout = new he(onTimeout)
 
@@ -36,17 +36,21 @@ pc = new PairsDepthComparator(burses, pairsComparefinishedCallback)
 
 
 function printDifferences(priceDifferences) {
+  var diffs = new Array()
   for(const diff of priceDifferences)
   {
       //console.log(diff)
       if(diff.diff > 1 && diff.diff < 50)
-          console.log(diff.pair + " " + diff.highest + " " + diff.lowest + " " + diff.diff )
+      {
+          //console.log(diff.pair + " " + diff.highest + " " + diff.lowest + " " + diff.diff )
+          diffs.push(diff)
+      }
   }
-  pc.compare(priceDifferences)
+  pc.compare(diffs)
 }
 
-timeout.timeoutAfter(1)
-
+timeout.timeoutAfter(10)
+bc.compare()
 function onTimeout() {
-  bc.compare(pairsToCompare)
+ // bc.compare(pairsToCompare)
 }

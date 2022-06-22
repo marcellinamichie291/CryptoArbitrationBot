@@ -5,7 +5,7 @@ const fse = require('fs-extra');
 class Gateio extends(bu){
 
     parsePairs() {
-        console.log("parsePairs Gateio")
+       // console.log("parsePairs Gateio")
 
         axios
         .get('https://api.gateio.ws/api/v4/spot/currency_pairs')
@@ -27,7 +27,7 @@ class Gateio extends(bu){
     }
 
     getTickers() {
-        console.log("getTickers Gateio")
+       // console.log("getTickers Gateio")
         return new Promise((resolve, reject) => {
             axios
             .get('https://api.gateio.ws/api/v4/spot/tickers')
@@ -51,7 +51,7 @@ class Gateio extends(bu){
     }
 
     getTicker(pair) {   
-        console.log("getTicker Gateio")
+       // console.log("getTicker Gateio")
         return new Promise((resolve, reject) => {
             var tickerRequest = 'https://api.gateio.ws/api/v4/spot/tickers?currency_pair='
             tickerRequest += pair
@@ -77,7 +77,7 @@ class Gateio extends(bu){
     }
 
     getDepth(pair, precision = 12) {
-        console.log("getDepth Bitmart")
+       // console.log("getDepth Bitmart")
         var asksDepth = new Array();
         var bidsDepth = new Array();
         return new Promise((resolve, reject) => {

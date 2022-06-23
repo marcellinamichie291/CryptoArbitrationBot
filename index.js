@@ -14,21 +14,29 @@ burses.push(new bm())
 burses.push(new gi())
 burses.push(new me())
 
-//  burses[0].getDepth("CFX_USDT").then(res => {
-//    console.log(res)
-//  })
-// burses[1].getDepth("CFX_USDT").then(res => {
-//   console.log(res)
-// })
-// burses[2].getDepth("CFX_USDT").then(res => {
-//   console.log(res)
-// })
-
 tickersComparefinishedCallback = function(priceDifferences) {
   printDifferences(priceDifferences)
 }
+
 pairsComparefinishedCallback = function(compare) {
-  console.log(compare)
+  for(const pair of compare)
+  {
+    if(pair.buys.length > 0 && pair.sells.length > 0)
+    {
+        var diff = 100-((pair.buys[0].price / pair.sells[0].price)*100)
+        if(diff > 2 && diff < 100)
+        {
+            console.log("*********************************************************************************************")
+            console.log("BUY AT: " + pair.buyBurse + " FOR: " + pair.buys[0].price + " AMOUNT: " + pair.buys[0].amount)
+            console.log("SELL AT: " + pair.sellBurse + " FOR: " + pair.sells[0].price + " AMOUNT: " + pair.sells[0].amount)
+            const sellFor = pair.sells[0].amount * pair.sells[0].price
+            const buyMax = Math.min(pair.sells[0].amount, pair.buys[0].amount)
+            console.log("YOU CAN SELL FOR: " + sellFor + "$ MAX BUY: " + buyMax)
+            console.log("DEPTH DIFFERENCE FOR: "  + pair.pair + " IS " + diff)
+            console.log("*********************************************************************************************")
+        }
+    }
+  }
 }
 
 bc = new BursesComparator(burses, tickersComparefinishedCallback);
@@ -40,7 +48,7 @@ function printDifferences(priceDifferences) {
   for(const diff of priceDifferences)
   {
       //console.log(diff)
-      if(diff.diff > 1 && diff.diff < 50)
+      if(diff.diff > 0.5 && diff.diff < 50)
       {
           //console.log(diff.pair + " " + diff.highest + " " + diff.lowest + " " + diff.diff )
           diffs.push(diff)
@@ -51,6 +59,7 @@ function printDifferences(priceDifferences) {
 
 timeout.timeoutAfter(10)
 bc.compare()
+
 function onTimeout() {
  // bc.compare(pairsToCompare)
 }

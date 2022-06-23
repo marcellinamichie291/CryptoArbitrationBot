@@ -4,6 +4,11 @@ const fse = require('fs-extra');
 
 class Mexc extends(bu){
     
+    constructor()
+    {
+        super()
+    }
+
     parsePairs() {
        // console.log("parsePairs Mexc")
 
@@ -114,6 +119,11 @@ class Mexc extends(bu){
                 reject(error)
             });
         })  
+    }
+
+    getOnlyListOfCurrencyDetail()
+    {
+        return false
     }
 }
 

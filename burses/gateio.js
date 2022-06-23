@@ -4,9 +4,13 @@ const fse = require('fs-extra');
 
 class Gateio extends(bu){
 
+    constructor()
+    {
+        super()
+    }
+
     parsePairs() {
        // console.log("parsePairs Gateio")
-
         axios
         .get('https://api.gateio.ws/api/v4/spot/currency_pairs')
         .then(res => {
@@ -114,6 +118,11 @@ class Gateio extends(bu){
                 reject(error)
             });
         })  
+    }
+
+    getOnlyListOfCurrencyDetail()
+    {
+        return false
     }
 }
 

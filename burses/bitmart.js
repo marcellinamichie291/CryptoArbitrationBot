@@ -4,6 +4,28 @@ const fse = require('fs-extra');
 
 class Bitmart extends(bu){
 
+    currencies = new Array()
+    constructor()   
+    {
+        super()
+        axios
+        .get('https://api-cloud.bitmart.com/account/v1/currencies')
+        .then(res => {
+            for(const currency of res.data.data.currencies)
+            {
+                //for(const split of currencies)
+                //    console.log(split);
+                //var value = {from: currencies[0], to: currencies[1]}
+                this.currencies.push(currency)
+            }
+            //console.dir(this.pairs)
+            //var roughObjSize = JSON.stringify(res.data.data).length;
+        })
+        .catch(error => {
+            console.error(error);
+        });
+    }
+
     parsePairs() {
         //console.log("parsePairs Bitmart")
 
@@ -101,10 +123,26 @@ class Bitmart extends(bu){
                 resolve(depthOfPair)
             })
             .catch(error => {
-                console.error(error);
+                console.error(error)
                 reject(error)
             });
         })  
+    }
+
+    getCurrencyInfo(pair)
+    {
+        if(pair.includes("_USDT") === false)
+            return {}
+        pair =pair.replace("_USDT", "")
+        
+        for(const currency of this.currencies)
+        {
+            if(currency.currency === pair)
+            {
+                
+            }
+        }
+        return {}
     }
 }
 

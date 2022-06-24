@@ -1,6 +1,7 @@
 bu = require("./Burse")
 const axios = require('axios');
 const fse = require('fs-extra');
+const he = require('../helper')
 
 class Bitmart extends(bu){
 
@@ -8,22 +9,9 @@ class Bitmart extends(bu){
     constructor()   
     {
         super()
-        axios
-        .get('https://api-cloud.bitmart.com/account/v1/currencies')
-        .then(res => {
-            for(const currency of res.data.data.currencies)
-            {
-                //for(const split of currencies)
-                //    console.log(split);
-                //var value = {from: currencies[0], to: currencies[1]}
-                this.currencies.push(currency)
-            }
-            //console.dir(this.pairs)
-            //var roughObjSize = JSON.stringify(res.data.data).length;
-        })
-        .catch(error => {
-            console.error(error);
-        });
+        this.onRefreshCurrenciesTick()
+        this.refreshCurrenciesTimer = new he(this.onRefreshCurrenciesTick)
+        this.refreshCurrenciesTimer.timeoutAfter(10)
     }
 
     parsePairs() {
@@ -129,17 +117,39 @@ class Bitmart extends(bu){
         })  
     }
 
+    onRefreshCurrenciesTick()
+    {
+        const currentDatetimeTs = Date.now()
+        if(currentDatetimeTs - this.lastCurrenciesUpdate < 6000)
+            return
+        
+        this.currencies = []
+        axios
+        .get('https://api-cloud.bitmart.com/account/v1/currencies')
+        .then(res => {
+            for(const currency of res.data.data.currencies)
+            {
+                this.currencies.push(currency)
+            }
+        })
+        .catch(error => {
+            console.error(error);
+        });
+
+        this.lastCurrenciesUpdateTs = Date.now();
+    }
+
     getCurrencyInfo(pair)
     {
         if(pair.includes("_USDT") === false)
             return {}
-        pair =pair.replace("_USDT", "")
+        pair = pair.replace("_USDT", "")
         
         for(const currency of this.currencies)
         {
             if(currency.currency === pair)
             {
-                
+                return {chain:currency.network, withdraw: currency.withdraw_enabled, deposit: currency.deposit_enabled}
             }
         }
         return {}

@@ -125,6 +125,38 @@ class Mexc extends(bu){
     {
         return false
     }
+
+    getCurrencyInfo(pair)
+    {
+
+        if(pair.includes("_USDT") === false)
+            return {}
+        pair = pair.replace("_USDT", "")
+               
+        axios
+        .get('https://www.mexc.com/open/api/v2/market/coin/list')
+        .then(res => {
+            for(const currency of res.data.data.currencies)
+            {
+                this.currencies.push(currency)
+            }
+        })
+        .catch(error => {
+            console.error(error);
+        });
+
+        this.lastCurrenciesUpdateTs = Date.now();
+
+
+        for(const currency of this.currencies)
+        {
+            if(currency.currency === pair)
+            {
+                return {chain:currency.network, withdraw: currency.withdraw_enabled, deposit: currency.deposit_enabled}
+            }
+        }
+        return {}
+    }
 }
 
 module.exports = Mexc // 👈 Export class

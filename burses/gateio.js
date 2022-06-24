@@ -124,6 +124,44 @@ class Gateio extends(bu){
     {
         return false
     }
+
+    onRefreshCurrenciesTick()
+    {
+        const currentDatetimeTs = Date.now()
+        if(currentDatetimeTs - this.lastCurrenciesUpdate < 6000)
+            return
+        
+        this.currencies = []
+        axios
+        .get('https://api.gateio.ws/api/v4/spot/currencies')
+        .then(res => {
+            for(const currency of res.data.data.currencies)
+            {
+                this.currencies.push(currency)
+            }
+        })
+        .catch(error => {
+            console.error(error);
+        });
+
+        this.lastCurrenciesUpdateTs = Date.now();
+    }
+
+    getCurrencyInfo(pair)
+    {
+        if(pair.includes("_USDT") === false)
+            return {}
+        pair = pair.replace("_USDT", "")
+        
+        for(const currency of this.currencies)
+        {
+            if(currency.currency === pair)
+            {
+                return {chain:currency.network, withdraw: currency.withdraw_enabled, deposit: currency.deposit_enabled}
+            }
+        }
+        return {}
+    }
 }
 
 module.exports = Gateio // 👈 Export class

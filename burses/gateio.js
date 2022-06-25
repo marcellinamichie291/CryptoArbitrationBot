@@ -114,8 +114,7 @@ class Gateio extends(bu){
                 resolve(depthOfPair)
             })
             .catch(error => {
-                console.error(error);
-                reject(error)
+                reject("FAILED TO GET DEPTH FOR BURSE: " + this.constructor.name + ", PAIR: " + pair + ", ERROR: " + error)
             });
         })  
     }
@@ -137,7 +136,19 @@ class Gateio extends(bu){
         .then(res => {
             for(const currency of res.data)
             {
-                this.currencies.push(currency)
+                try {
+                    if(currency.chain === undefined)
+                        continue
+                    var res = super.parseChainName(currency.chain)
+                    this.currencies.push({currency: currency.currency, chain:res, withdraw: !currency.withdraw_disabled, deposit: !currency.deposit_disabled})
+                
+                } catch (error) {
+                    //console.error(error)
+                }
+
+                // this.parseChainName(currency.chain).then(chain => {
+                //     this.currencies.push({currency: currency.currency, chain:chain, withdraw: !currency.withdraw_disabled, deposit: !currency.deposit_disabled})
+                // }).catch(e =>{})
             }
         })
         .catch(error => {
@@ -147,21 +158,21 @@ class Gateio extends(bu){
         this.lastCurrenciesUpdateTs = Date.now();
     }
 
-    getCurrencyInfo(pair)
-    {
-        if(pair.includes("_USDT") === false)
-            return {}
-        pair = pair.replace("_USDT", "")
+    // getCurrencyInfo(pair)
+    // {
+    //     if(pair.includes("_USDT") === false)
+    //         return {}
+    //     pair = pair.replace("_USDT", "")
         
-        for(const currency of this.currencies)
-        {
-            if(currency.currency === pair)
-            {
-                return {chain:currency.network, withdraw: currency.withdraw_enabled, deposit: currency.deposit_enabled}
-            }
-        }
-        return {}
-    }
+    //     for(const currency of this.currencies)
+    //     {
+    //         if(currency.currency === pair)
+    //         {
+    //             return {chain:currency.network, withdraw: currency.withdraw_enabled, deposit: currency.deposit_enabled}
+    //         }
+    //     }
+    //     return {}
+    // }
 }
 
 module.exports = Gateio // 👈 Export class

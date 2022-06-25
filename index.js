@@ -14,15 +14,45 @@ burses.push(new bm())
 burses.push(new gi())
 burses.push(new me())
 
-tickersComparefinishedCallback = function(priceDifferences) {
+tickersComparefinishedCallback = async function(priceDifferences) {
   console.log("GET TICKERS DIFFERENCES FINISHED SUCCESSFUL")
   var diffs = new Array()
   for(const diff of priceDifferences)
   {
       if(diff.diff > 0.8 && diff.diff < 50)
       {
-          //console.log(diff.pair + " " + diff.highest + " " + diff.lowest + " " + diff.diff )
+        var highestCurrencyInfo
+        var lowestCurrencyInfo
+        var skipThePair
+        for(const burse of burses)
+        {
+          skipThePair = false
+          if(burse.constructor.name === diff.highest)
+          {
+            try {
+              highestCurrencyInfo = await burse.getCurrencyInfo(diff.pair)  
+            } catch (error) {skipThePair = true; break}
+          }
+
+          if(burse.constructor.name === diff.lowest)
+          {
+            try {
+              lowestCurrencyInfo = await burse.getCurrencyInfo(diff.pair) 
+              break
+            } catch (error) {skipThePair = true; break}
+          }
+        }
+
+        if(skipThePair === true)
+        {
+          continue
+        }
+
+        if(highestCurrencyInfo.chain === "BEP20" || highestCurrencyInfo.chain === "BSC" && highestCurrencyInfo.deposit && 
+        lowestCurrencyInfo.chain === "BEP20" || lowestCurrencyInfo.chain === "BSC" && lowestCurrencyInfo.withdraw)
+        {
           diffs.push(diff)
+        }
       }
   }
   console.log("GET DEPTH OF MARKETS")
@@ -30,7 +60,7 @@ tickersComparefinishedCallback = function(priceDifferences) {
 }
 
 pairsComparefinishedCallback = function(compare) {
-  console.log("GET DEPTH OF MARKETS FINISHED SUCCESSFUL")
+  console.log("\nGET DEPTH OF MARKETS FINISHED SUCCESSFUL")
 
   for(const pair of compare)
   {
@@ -59,7 +89,8 @@ function printProgress(progress) {
 }
 
 pairsCompareProgressCallback = function(progress) {
-  printProgress("DEPTH PROGRESS: " + progress)
+  //printProgress("DEPTH PROGRESS: " + progress)
+  console.log(progress)
 }
 
 bc = new BursesComparator(burses, tickersComparefinishedCallback);

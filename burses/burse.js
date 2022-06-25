@@ -38,8 +38,29 @@ const he = require('../helper')
       throw new Error("Method 'onRefreshCurrenciesTick()' must be implemented.");
     }
 
-    getCurrencyInfo(pair) {
-      throw new Error("Method 'getCurrencyInfo()' must be implemented.");
+    parseChainName(chain)
+    {
+        if(chain.includes("BEP20") || chain.includes("BEP"))
+            return "BEP20"
+        else if(chain.includes("BSC"))
+            return "BSC"
+        throw "UNKNOWN CHAIN"
+    }
+
+    getCurrencyInfo(pair)
+    {
+        if(pair.includes("_USDT") === false)
+            throw "PAIR DOES NOT CONTAINS _USD"
+        pair = pair.replace("_USDT", "")
+        
+        for(const currency of this.currencies)
+        {
+            if(currency.currency === pair)
+            {
+                return currency
+            }
+        }
+        throw "CANT FIND " + pair
     }
   }
 

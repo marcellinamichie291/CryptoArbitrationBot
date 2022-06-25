@@ -19,8 +19,7 @@ tickersComparefinishedCallback = function(priceDifferences) {
   var diffs = new Array()
   for(const diff of priceDifferences)
   {
-      //console.log(diff)
-      if(diff.diff > 0.5 && diff.diff < 50)
+      if(diff.diff > 0.8 && diff.diff < 50)
       {
           //console.log(diff.pair + " " + diff.highest + " " + diff.lowest + " " + diff.diff )
           diffs.push(diff)
@@ -53,8 +52,18 @@ pairsComparefinishedCallback = function(compare) {
   }
 }
 
+function printProgress(progress) {
+  process.stdout.clearLine()
+  process.stdout.cursorTo(0)
+  process.stdout.write(progress)
+}
+
+pairsCompareProgressCallback = function(progress) {
+  printProgress("DEPTH PROGRESS: " + progress)
+}
+
 bc = new BursesComparator(burses, tickersComparefinishedCallback);
-pc = new PairsDepthComparator(burses, pairsComparefinishedCallback)
+pc = new PairsDepthComparator(burses, pairsComparefinishedCallback, pairsCompareProgressCallback)
 
 timeout.timeoutAfter(10)
 console.log("GET TICKERS DIFFERENCES")

@@ -15,10 +15,24 @@ burses.push(new gi())
 burses.push(new me())
 
 tickersComparefinishedCallback = function(priceDifferences) {
-  printDifferences(priceDifferences)
+  console.log("GET TICKERS DIFFERENCES FINISHED SUCCESSFUL")
+  var diffs = new Array()
+  for(const diff of priceDifferences)
+  {
+      //console.log(diff)
+      if(diff.diff > 0.5 && diff.diff < 50)
+      {
+          //console.log(diff.pair + " " + diff.highest + " " + diff.lowest + " " + diff.diff )
+          diffs.push(diff)
+      }
+  }
+  console.log("GET DEPTH OF MARKETS")
+  pc.compare(diffs)
 }
 
 pairsComparefinishedCallback = function(compare) {
+  console.log("GET DEPTH OF MARKETS FINISHED SUCCESSFUL")
+
   for(const pair of compare)
   {
     if(pair.buys.length > 0 && pair.sells.length > 0)
@@ -42,22 +56,8 @@ pairsComparefinishedCallback = function(compare) {
 bc = new BursesComparator(burses, tickersComparefinishedCallback);
 pc = new PairsDepthComparator(burses, pairsComparefinishedCallback)
 
-
-function printDifferences(priceDifferences) {
-  var diffs = new Array()
-  for(const diff of priceDifferences)
-  {
-      //console.log(diff)
-      if(diff.diff > 0.5 && diff.diff < 50)
-      {
-          //console.log(diff.pair + " " + diff.highest + " " + diff.lowest + " " + diff.diff )
-          diffs.push(diff)
-      }
-  }
-  pc.compare(diffs)
-}
-
 timeout.timeoutAfter(10)
+console.log("GET TICKERS DIFFERENCES")
 bc.compare()
 
 function onTimeout() {

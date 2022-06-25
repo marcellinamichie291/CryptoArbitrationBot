@@ -126,17 +126,17 @@ class Mexc extends(bu){
         return false
     }
 
-    getCurrencyInfo(pair)
+    onRefreshCurrenciesTick()
     {
-
-        if(pair.includes("_USDT") === false)
-            return {}
-        pair = pair.replace("_USDT", "")
-               
+        const currentDatetimeTs = Date.now()
+        if(currentDatetimeTs - this.lastCurrenciesUpdate < 6000)
+            return
+        
+        this.currencies = []
         axios
         .get('https://www.mexc.com/open/api/v2/market/coin/list')
         .then(res => {
-            for(const currency of res.data.data.currencies)
+            for(const currency of res.data.data)
             {
                 this.currencies.push(currency)
             }
@@ -146,8 +146,14 @@ class Mexc extends(bu){
         });
 
         this.lastCurrenciesUpdateTs = Date.now();
+    }
 
-
+    getCurrencyInfo(pair)
+    {
+        if(pair.includes("_USDT") === false)
+            return {}
+        pair = pair.replace("_USDT", "")
+        
         for(const currency of this.currencies)
         {
             if(currency.currency === pair)

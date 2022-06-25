@@ -135,7 +135,7 @@ class Gateio extends(bu){
         axios
         .get('https://api.gateio.ws/api/v4/spot/currencies')
         .then(res => {
-            for(const currency of res.data.data.currencies)
+            for(const currency of res.data)
             {
                 this.currencies.push(currency)
             }

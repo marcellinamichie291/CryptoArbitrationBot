@@ -5,13 +5,9 @@ const he = require('../helper')
 
 class Bitmart extends(bu){
 
-    currencies = new Array()
     constructor()   
     {
         super()
-        this.onRefreshCurrenciesTick()
-        this.refreshCurrenciesTimer = new he(this.onRefreshCurrenciesTick)
-        this.refreshCurrenciesTimer.timeoutAfter(10)
     }
 
     parsePairs() {
@@ -79,7 +75,7 @@ class Bitmart extends(bu){
                 resolve(pair)
             })
             .catch(error => {
-                //console.error(error);
+                console.error(pair);
                 reject(error)
             });
         })

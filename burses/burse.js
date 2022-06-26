@@ -18,8 +18,8 @@ const he = require('../helper')
       }
 
       this.onRefreshCurrenciesTick()
-      this.refreshCurrenciesTimer = new he(this.onRefreshCurrenciesTick)
-      this.refreshCurrenciesTimer.timeoutAfter(10)
+      this.helper = new he()
+      this.helper.timeoutAfter(10, this.onRefreshCurrenciesTick)
     }
 
     getTickers() {

@@ -158,21 +158,29 @@ class Gateio extends(bu){
         this.lastCurrenciesUpdateTs = Date.now();
     }
 
-    // getCurrencyInfo(pair)
-    // {
-    //     if(pair.includes("_USDT") === false)
-    //         return {}
-    //     pair = pair.replace("_USDT", "")
+    // /spot/currencies
+    async getCurrentCurrencyInfo(pair)
+    {
+        if(pair.includes("_USDT") === false)
+            throw 500
+        pair = pair.replace("_USDT", "")
         
-    //     for(const currency of this.currencies)
-    //     {
-    //         if(currency.currency === pair)
-    //         {
-    //             return {chain:currency.network, withdraw: currency.withdraw_enabled, deposit: currency.deposit_enabled}
-    //         }
-    //     }
-    //     return {}
-    // }
+        await axios
+        .get('https://api.gateio.ws/api/v4/spot/currencies/' + pair)
+        .then(res => {
+            try {
+                var resChain = super.parseChainName(res.data.chain)
+                return resChain
+                //return {currency: res.data.currency, chain:resChain, withdraw: !res.data.withdraw_disabled, deposit: !res.data.deposit_disabled}
+            } catch (error) {
+                throw error
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            throw 500
+        });
+    }
 }
 
 module.exports = Gateio // 👈 Export class

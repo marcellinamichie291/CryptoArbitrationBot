@@ -132,7 +132,6 @@ class Bitmart extends(bu){
                         this.currencies.push({currency: currency.currency, chain:res, withdraw: currency.withdraw_enabled, deposit: currency.deposit_enabled})
                     
                     } catch (error) {
-                        reject(error)
                     }
                 }
                 this.lastCurrenciesUpdateTs = Date.now();

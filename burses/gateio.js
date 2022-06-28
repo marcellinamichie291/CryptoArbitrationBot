@@ -143,7 +143,6 @@ class Gateio extends(bu){
                         this.currencies.push({currency: currency.currency, chain:res, withdraw: !currency.withdraw_disabled, deposit: !currency.deposit_disabled})
                     
                     } catch (error) {
-                        reject(error)
                     }
                 }
                 this.lastCurrenciesUpdateTs = Date.now();

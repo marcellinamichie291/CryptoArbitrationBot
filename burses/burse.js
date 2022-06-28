@@ -44,7 +44,7 @@ const he = require('../helper')
             return "BEP20"
         else if(chain.includes("BSC"))
             return "BSC"
-        return "UNKNOWN CHAIN"
+        throw "UNKNOWN CHAIN"
     }
 
     getCurrencyInfo(pair)

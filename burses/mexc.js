@@ -145,7 +145,6 @@ class Mexc extends(bu){
                             var res = super.parseChainName(coin.chain)
                             this.currencies.push({currency: currency.currency, chain:res, withdraw: coin.is_withdraw_enabled, deposit: coin.is_deposit_enabled})
                         } catch (error) {
-                            reject(error)
                         }
                     }
                 }

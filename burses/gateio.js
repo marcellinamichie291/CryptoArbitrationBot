@@ -126,60 +126,56 @@ class Gateio extends(bu){
 
     onRefreshCurrenciesTick()
     {
-        const currentDatetimeTs = Date.now()
-        if(currentDatetimeTs - this.lastCurrenciesUpdate < 6000)
-            return
-        
-        this.currencies = []
-        axios
-        .get('https://api.gateio.ws/api/v4/spot/currencies')
-        .then(res => {
-            for(const currency of res.data)
-            {
-                try {
-                    if(currency.chain === undefined)
-                        continue
-                    var res = super.parseChainName(currency.chain)
-                    this.currencies.push({currency: currency.currency, chain:res, withdraw: !currency.withdraw_disabled, deposit: !currency.deposit_disabled})
-                
-                } catch (error) {
-                    //console.error(error)
+        return new Promise((resolve, reject) => {
+            const currentDatetimeTs = Date.now()
+            if(currentDatetimeTs - this.lastCurrenciesUpdate < 6000)
+                reject("RECENTLY REFRESHED")
+            
+            this.currencies = []
+            axios.get('https://api.gateio.ws/api/v4/spot/currencies')
+            .then(res => {
+                for(const currency of res.data)
+                {
+                    try {
+                        if(currency.chain === undefined)
+                            continue
+                        var res = super.parseChainName(currency.chain)
+                        this.currencies.push({currency: currency.currency, chain:res, withdraw: !currency.withdraw_disabled, deposit: !currency.deposit_disabled})
+                    
+                    } catch (error) {
+                        reject(error)
+                    }
                 }
-
-                // this.parseChainName(currency.chain).then(chain => {
-                //     this.currencies.push({currency: currency.currency, chain:chain, withdraw: !currency.withdraw_disabled, deposit: !currency.deposit_disabled})
-                // }).catch(e =>{})
-            }
+                this.lastCurrenciesUpdateTs = Date.now();
+                resolve(this.currencies)
+            })
+            .catch(error => {
+                reject(error)
+            });
         })
-        .catch(error => {
-            console.error(error);
-        });
-
-        this.lastCurrenciesUpdateTs = Date.now();
     }
 
     // /spot/currencies
-    async getCurrentCurrencyInfo(pair)
+    getCurrentCurrencyInfo(pair)
     {
-        if(pair.includes("_USDT") === false)
-            throw 500
-        pair = pair.replace("_USDT", "")
-        
-        await axios
-        .get('https://api.gateio.ws/api/v4/spot/currencies/' + pair)
-        .then(res => {
-            try {
-                var resChain = super.parseChainName(res.data.chain)
-                return resChain
-                //return {currency: res.data.currency, chain:resChain, withdraw: !res.data.withdraw_disabled, deposit: !res.data.deposit_disabled}
-            } catch (error) {
-                throw error
-            }
+        return new Promise((resolve, reject) => {
+            if(pair.includes("_USDT") === false)
+                throw 500
+            pair = pair.replace("_USDT", "")
+            
+            axios.get('https://api.gateio.ws/api/v4/spot/currencies/' + pair)
+            .then(res => {
+                try {
+                    var resChain = super.parseChainName(res.data.chain)
+                    resolve({currency: res.data.currency, chain:resChain, withdraw: !res.data.withdraw_disabled, deposit: !res.data.deposit_disabled})
+                } catch (error) {
+                    reject(error)
+                }
+            })
+            .catch(error => {
+                reject(error)
+            });
         })
-        .catch(error => {
-            console.error(error);
-            throw 500
-        });
     }
 }
 

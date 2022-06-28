@@ -127,38 +127,35 @@ class Mexc extends(bu){
 
     onRefreshCurrenciesTick()
     {
-        const currentDatetimeTs = Date.now()
-        if(currentDatetimeTs - this.lastCurrenciesUpdate < 6000)
-            return
-        
-        this.currencies = []
-        axios
-        .get('https://www.mexc.com/open/api/v2/market/coin/list')
-        .then(res => {
-            for(const currency of res.data.data)
-            {
-                for(const coin of currency.coins)
+        return new Promise((resolve, reject) => {
+            const currentDatetimeTs = Date.now()
+            if(currentDatetimeTs - this.lastCurrenciesUpdate < 6000)
+                reject("RECENTLY REFRESHED")
+
+            this.currencies = []
+            axios.get('https://www.mexc.com/open/api/v2/market/coin/list')
+            .then(res => {
+                for(const currency of res.data.data)
                 {
-                    try {
-                        if(coin.chain === undefined)
-                            continue
-                        var res = super.parseChainName(coin.chain)
-                        this.currencies.push({currency: currency.currency, chain:res, withdraw: coin.is_withdraw_enabled, deposit: coin.is_deposit_enabled})
-                    } catch (error) {
-                        //console.error(error)
+                    for(const coin of currency.coins)
+                    {
+                        try {
+                            if(coin.chain === undefined)
+                                continue
+                            var res = super.parseChainName(coin.chain)
+                            this.currencies.push({currency: currency.currency, chain:res, withdraw: coin.is_withdraw_enabled, deposit: coin.is_deposit_enabled})
+                        } catch (error) {
+                            reject(error)
+                        }
                     }
-
-                    // this.parseChainName(coin.chain).then(chain => {
-                    //     this.currencies.push({currency: currency.currency, chain:chain, withdraw: coin.is_withdraw_enabled, deposit: coin.is_deposit_enabled})
-                    // }).catch(e =>{})
                 }
-            }
+                this.lastCurrenciesUpdateTs = Date.now();
+                resolve(this.currencies)
+            })
+            .catch(error => {
+                reject(error)
+            });
         })
-        .catch(error => {
-            console.error(error);
-        });
-
-        this.lastCurrenciesUpdateTs = Date.now();
     }
 
     // getCurrencyInfo(pair)

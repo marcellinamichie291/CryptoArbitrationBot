@@ -15,24 +15,29 @@ class TradeSimulator {
         this.helper = new he()
         this.pc = new PairsDepthComparator(this.burses, this.pairsComparefinishedCallback, this.pairsCompareProgressCallback)
         this.bc = new BursesComparator(this.burses, this.tickersComparefinishedCallback, this);
-        //this.helper.timeoutAfter(1, this.runTimerTick)
+        this.helper.timeoutAfter(1, this.runTimerTick)
         this.helper.timeoutAfter(60*3, this.onRefreshCurrenciesState, this)
+        setTimeout(this.onRefreshCurrenciesState, 1000, this);
 
-        
-        burses[1].getCurrentCurrencyInfo("GHC_USDT").then( res => {
-            console.log(res)
-            }).catch(e => {
-                console.error(e)
-            })
-
-        //setTimeout(this.onRefreshCurrenciesState, 1000, this);
+        this.burses[1].getCurrentCurrencyInfo("GHC_USDT").then( res => {
+          console.log(res)
+          }).catch(e => {
+              console.error(e)
+          })
     }     
 
     runTimerTick() {
 
     }
 
-    onRefreshCurrenciesState(instance) {
+    async onRefreshCurrenciesState(instance) {
+
+        console.log("REFRESH TICKERS")
+        for(const burse of instance.burses)
+        {
+          console.log(await burse.onRefreshCurrenciesTick())
+        }
+        console.log("REFRESH TICKERS FINISHED")
         console.log("GET TICKERS DIFFERENCES")
         instance.bc.compare().then(async res => {
             console.log("GET TICKERS DIFFERENCES FINISHED SUCCESSFUL")

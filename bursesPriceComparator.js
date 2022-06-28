@@ -57,7 +57,7 @@ class BursesPriceComparator {
                        ticker.burse = burse.constructor.name
                         receivedTickers.push(ticker)
                     }
-                    console.log("BURSE: " + burse.constructor.name + " FOUND " +  burse.prices + " TICKERS")
+                    //console.log("BURSE: " + burse.constructor.name + " FOUND " +  burse.prices + " TICKERS")
                 }).catch(error => { console.error("FAILED TO GET TICKERS " + error); });
             }
             
@@ -65,7 +65,7 @@ class BursesPriceComparator {
                 .then(alignedPairs => this.compareCompletePairsArray(alignedPairs)
                 .then(tickersDifferences => tickersDiffs = tickersDifferences))
             
-            console.log(tickersDiffs)
+            //console.log(tickersDiffs)
             return tickersDiffs
         }
     }

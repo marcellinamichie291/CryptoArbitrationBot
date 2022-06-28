@@ -17,9 +17,9 @@ const he = require('../helper')
         throw new Error("Abstract classes can't be instantiated.");
       }
 
-      this.onRefreshCurrenciesTick()
-      this.helper = new he()
-      this.helper.timeoutAfter(10, this.onRefreshCurrenciesTick)
+      // this.onRefreshCurrenciesTick()
+      // this.helper = new he()
+      // this.helper.timeoutAfter(10, this.onRefreshCurrenciesTick)
     }
 
     getTickers() {
@@ -44,7 +44,7 @@ const he = require('../helper')
             return "BEP20"
         else if(chain.includes("BSC"))
             return "BSC"
-        throw "UNKNOWN CHAIN"
+        return "UNKNOWN CHAIN"
     }
 
     getCurrencyInfo(pair)

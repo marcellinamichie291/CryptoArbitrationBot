@@ -114,37 +114,34 @@ class Bitmart extends(bu){
 
     onRefreshCurrenciesTick()
     {
-        const currentDatetimeTs = Date.now()
-        if(currentDatetimeTs - this.lastCurrenciesUpdate < 6000)
-            return
-        
-        this.currencies = []
-        axios
-        .get('https://api-cloud.bitmart.com/account/v1/currencies')
-        .then(res => {
-            for(const currency of res.data.data.currencies)
-            {
-                try {
-                    if(currency.network === undefined)
-                        continue
-                    var res = super.parseChainName(currency.network)
-                    this.currencies.push({currency: currency.currency, chain:res, withdraw: currency.withdraw_enabled, deposit: currency.deposit_enabled})
-                
-                } catch (error) {
-                    //console.error(error)
+        return new Promise((resolve, reject) => {
+            const currentDatetimeTs = Date.now()
+            if(currentDatetimeTs - this.lastCurrenciesUpdate < 6000)
+                reject("RECENTLY REFRESHED")
+            
+            this.currencies = []
+            axios
+            .get('https://api-cloud.bitmart.com/account/v1/currencies')
+            .then(res => {
+                for(const currency of res.data.data.currencies)
+                {
+                    try {
+                        if(currency.network === undefined)
+                            continue
+                        var res = super.parseChainName(currency.network)
+                        this.currencies.push({currency: currency.currency, chain:res, withdraw: currency.withdraw_enabled, deposit: currency.deposit_enabled})
+                    
+                    } catch (error) {
+                        reject(error)
+                    }
                 }
-
-
-                // this.parseChainName(currency.network).then(chain => {
-                //     this.currencies.push({currency: currency.currency, chain:chain, withdraw: currency.withdraw_enabled, deposit: currency.deposit_enabled})
-                // }).catch(e =>{})
-            }
+                this.lastCurrenciesUpdateTs = Date.now();
+                resolve(this.currencies)
+            })
+            .catch(error => {
+                reject(error)
+            });
         })
-        .catch(error => {
-            console.error(error);
-        });
-
-        this.lastCurrenciesUpdateTs = Date.now();
     }
 
     // async getCurrencyInfo(pair)

@@ -1,9 +1,11 @@
 class PairsDepthComparator {
 
-    constructor(burses, finishCallback, progressCallback){
+    constructor(burses, memberCallbackFinished, memberCallbackProgress){
         this.burses = burses
-        this.finishedCallback = finishCallback
-        this.progressCallback = progressCallback
+        this.finishedCallback = memberCallbackFinished.function
+        this.finishCallbackInstance = memberCallbackFinished.functionContext
+        this.progressCallback = memberCallbackProgress.function
+        this.progressCallbackInstance = memberCallbackProgress.functionContext
     }
 
     async compare(pairs) {
@@ -47,9 +49,9 @@ class PairsDepthComparator {
             {
                 comparedPairs.push({pair: pair.pair, buyBurse: buysBurse, sellBurse: sellsBurse, buys: buys, sells: sells})
             }
-            this.progressCallback(comparedPairs.length + "/" + (pairs.length - errors))
+            this.progressCallback(comparedPairs.length + "/" + (pairs.length - errors), this.progressCallbackInstance)
         }
-        this.finishedCallback(comparedPairs)
+        this.finishedCallback(comparedPairs, this.finishCallbackInstance)
     }
 }
 

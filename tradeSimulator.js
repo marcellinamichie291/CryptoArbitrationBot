@@ -13,82 +13,96 @@ class TradeSimulator {
     {
         this.burses = burses
         this.helper = new he()
-        this.pc = new PairsDepthComparator(this.burses, this.pairsComparefinishedCallback, this.pairsCompareProgressCallback)
+        const memeberCallbackFinished = { function:this.pairsComparefinishedCallback, 
+                                  functionContext: this }
+        const memeberCallbackProgress = { function:this.pairsCompareProgressCallback, 
+                                   functionContext: this }
+        this.pc = new PairsDepthComparator(this.burses, memeberCallbackFinished, memeberCallbackProgress)
         this.bc = new BursesComparator(this.burses, this.tickersComparefinishedCallback, this);
-        this.helper.timeoutAfter(1, this.runTimerTick)
-        this.helper.timeoutAfter(60*3, this.onRefreshCurrenciesState, this)
+        //this.helper.timeoutAfter(1, this.runTimerTick)
+        //this.helper.timeoutAfter(60, this.onRefreshCurrenciesState, this)
         setTimeout(this.onRefreshCurrenciesState, 1000, this);
 
-        this.burses[1].getCurrentCurrencyInfo("GHC_USDT").then( res => {
-          console.log(res)
-          }).catch(e => {
-              console.error(e)
-          })
+        // this.burses[0].getCurrencyInfo("$HERO").then( res => {
+        //   console.log(res)
+        //   }).catch(e => {
+        //       console.error(e)
+        //   })
+
+        //   this.burses[0].getDepth("$HERO").then( res => {
+        //     console.log(res)
+        //     }).catch(e => {
+        //         console.error(e)
+        //     })
     }     
 
     runTimerTick() {
 
     }
 
+    async computeDiffs(res, instance)
+    {
+      var diffs = new Array()
+      for(const diff of res)
+      {
+          if(diff.diff > 0.8 && diff.diff < 50)
+          {
+            var highestCurrencyInfo
+            var lowestCurrencyInfo
+            var skipThePair
+            for(const burse of instance.burses)
+            {
+              skipThePair = false
+              if(burse.constructor.name === diff.highest)
+              {
+                try {
+                  highestCurrencyInfo = await burse.getCurrencyInfo(diff.pair)  
+                } catch (error) {skipThePair = true; break}
+              }
+    
+              if(burse.constructor.name === diff.lowest)
+              {
+                try {
+                  lowestCurrencyInfo = await burse.getCurrencyInfo(diff.pair) 
+                  break
+                } catch (error) {skipThePair = true; break}
+              }
+            }
+    
+            if(skipThePair === true)
+            {
+              continue
+            }
+    
+            if(highestCurrencyInfo != undefined && highestCurrencyInfo.chain === "BEP20" || highestCurrencyInfo.chain === "BSC" && highestCurrencyInfo.deposit && 
+            lowestCurrencyInfo != undefined && lowestCurrencyInfo.chain === "BEP20" || lowestCurrencyInfo.chain === "BSC" && lowestCurrencyInfo.withdraw)
+            {
+              diffs.push(diff)
+            }
+          }
+      }
+      console.log("GET TICKERS DIFFERENCES FINISHED SUCCESSFUL")
+      console.log("GET DEPTH OF MARKETS")
+
+      instance.pc.compare(diffs)
+  }
+
     async onRefreshCurrenciesState(instance) {
 
         console.log("REFRESH TICKERS")
         for(const burse of instance.burses)
         {
-          console.log(await burse.onRefreshCurrenciesTick())
+          //if("Bitmart" === burse.constructor.name)
+          //for(const curr of await burse.onRefreshCurrenciesTick())
+          //  console.log(curr)
+          await burse.onRefreshCurrenciesTick()
         }
         console.log("REFRESH TICKERS FINISHED")
         console.log("GET TICKERS DIFFERENCES")
-        instance.bc.compare().then(async res => {
-            console.log("GET TICKERS DIFFERENCES FINISHED SUCCESSFUL")
-            var diffs = new Array()
-            for(const diff of res)
-            {
-                if(diff.diff > 0.8 && diff.diff < 50)
-                {
-                  var highestCurrencyInfo
-                  var lowestCurrencyInfo
-                  var skipThePair
-                  for(const burse of instance.burses)
-                  {
-                    skipThePair = false
-                    if(burse.constructor.name === diff.highest)
-                    {
-                      try {
-                        highestCurrencyInfo = await burse.getCurrencyInfo(diff.pair)  
-                      } catch (error) {skipThePair = true; break}
-                    }
-          
-                    if(burse.constructor.name === diff.lowest)
-                    {
-                      try {
-                        lowestCurrencyInfo = await burse.getCurrencyInfo(diff.pair) 
-                        break
-                      } catch (error) {skipThePair = true; break}
-                    }
-                  }
-          
-                  if(skipThePair === true)
-                  {
-                    continue
-                  }
-          
-                  if(highestCurrencyInfo.chain === "BEP20" || highestCurrencyInfo.chain === "BSC" && highestCurrencyInfo.deposit && 
-                  lowestCurrencyInfo.chain === "BEP20" || lowestCurrencyInfo.chain === "BSC" && lowestCurrencyInfo.withdraw)
-                  {
-                    diffs.push(diff)
-                  }
-                }
-            }
-            console.log("GET DEPTH OF MARKETS")
-            instance.pc.compare(diffs)
-        }).catch(e => {
-            console.error("FAILED TO GET TICKERS")
-        })
-
+        instance.bc.compare().then(res => instance.computeDiffs(res, instance))
     }
       
-      pairsComparefinishedCallback(compare) {
+    pairsComparefinishedCallback(compare, instance) {
         console.log("\nGET DEPTH OF MARKETS FINISHED SUCCESSFUL")
       
         var output = ""
@@ -122,9 +136,11 @@ class TradeSimulator {
         }
         console.log(output)
         fse.writeFileSync('./diffs.log', output);
-      }
+
+        setTimeout(instance.onRefreshCurrenciesState, 1000, instance);
+    }
       
-      pairsCompareProgressCallback(progress) {
+      pairsCompareProgressCallback(progress, instance) {
         //printProgress("DEPTH PROGRESS: " + progress)
         console.log(progress)
       }

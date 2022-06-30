@@ -217,7 +217,7 @@ class Bitmart extends(bu){
                 "X-BM-SIGN":this.getSign(query_param, currentTimestamp)
             }
             }).then(res => {
-                reso(res.data)
+                reso({withdraw_fee:res.data.data.withdraw_fee})
             }).catch(e => { 
                 err(e)
             })

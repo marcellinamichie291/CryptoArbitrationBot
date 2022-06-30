@@ -244,7 +244,7 @@ class Gateio extends(bu){
                 "SIGN":this.getSign(method, prefix, url, query_param, payload_param, currentTimestamp)
             }
             }).then(res => {
-                reso(res.data)
+                reso({withdraw_fee:res.data[0].withdraw_fix})
             }).catch(e => { 
                 err(e)
             })

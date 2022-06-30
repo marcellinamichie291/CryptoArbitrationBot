@@ -14,4 +14,5 @@ burses.push(new bm())
 burses.push(new gi())
 burses.push(new me())
 
-tradeSimulator = new TradeSimulator(burses)
+for(const burse of burses)
+    burse.getWithdrawFee("EMPIRE").then(res => logger.verbose(burse.constructor.name + ": " + JSON.stringify(res)))

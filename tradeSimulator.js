@@ -59,6 +59,8 @@ class TradeSimulator {
                   await burse.getCurrencyInfo(diff.pair)
                     .then(res => highestCurrencyInfo=res)
                     .catch(err => skipThePair = true)
+                  if(skipThePair === true)
+                    break;
               }
     
               if(burse.constructor.name === diff.lowest)
@@ -66,11 +68,14 @@ class TradeSimulator {
                   await burse.getCurrencyInfo(diff.pair)
                     .then( res => lowestCurrencyInfo=res)
                     .catch(err => skipThePair = true)
-
+                  if(skipThePair === true)
+                    break;
                   var currency = diff.pair.replace("_USDT", "")
                   await burse.getWithdrawFee(currency)
                     .then(res => diff.withdraw_fee=res.withdraw_fee)
                     .catch(err => skipThePair = true)
+                  if(skipThePair === true)
+                    break;
               }
             }
     

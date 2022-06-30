@@ -14,10 +14,8 @@ burses.push(new bm())
 burses.push(new gi())
 burses.push(new me())
 
-//for(const burse of burses)
-    burses[0].getWithdrawFee("HERO").then(res => logger.verbose(JSON.stringify(res)))
-    burses[1].getWithdrawFee("HERO").then(res => logger.verbose(JSON.stringify(res)))
-    burses[2].getWithdrawFee("HERO").then(res => logger.verbose(JSON.stringify(res)))
+for(const burse of burses)
+    burse.getWithdrawFee("EMPIRE").then(res => logger.verbose(JSON.stringify(res)))
 
 // helper = new Helper()
 // helper.timeoutAfter(10, onRefreshCurrenciesState, null)

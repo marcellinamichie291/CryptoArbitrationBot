@@ -9,6 +9,14 @@ class Mexc extends(bu){
         super()
     }
 
+    getKey(){
+        return process.env.MEXC_KEY
+    }
+  
+    getSecret(){
+        return process.env.MEXC_SECRET
+    }
+
     parsePairs() {
        // console.log("parsePairs Mexc")
 

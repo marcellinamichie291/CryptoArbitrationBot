@@ -1,4 +1,5 @@
 const he = require('../helper')
+require('dotenv').config();
 
 /**
  * Abstract Class Burse.
@@ -6,6 +7,7 @@ const he = require('../helper')
  * @class Burse
  */
  class Burse {
+    
 
     pairs = new Array()
     prices = new Array()
@@ -20,6 +22,14 @@ const he = require('../helper')
       // this.onRefreshCurrenciesTick()
       // this.helper = new he()
       // this.helper.timeoutAfter(10, this.onRefreshCurrenciesTick)
+    }
+
+    getKey(){
+      throw new Error("Method 'getKey()' must be implemented.");
+    }
+
+    getSecret(){
+      throw new Error("Method 'getSecret()' must be implemented.");
     }
 
     getTickers() {

@@ -9,6 +9,14 @@ class Gateio extends(bu){
         super()
     }
 
+    getKey(){
+        return process.env.GATEIO_KEY
+    }
+  
+    getSecret(){
+        return process.env.GATEIO_SECRET
+    }
+
     parsePairs() {
        // console.log("parsePairs Gateio")
         axios

@@ -10,6 +10,14 @@ class Bitmart extends(bu){
         super()
     }
 
+    getKey(){
+        return process.env.BITMART_KEY
+    }
+  
+    getSecret(){
+        return process.env.BITMART_SECRET
+    }
+
     parsePairs() {
         //console.log("parsePairs Bitmart")
 

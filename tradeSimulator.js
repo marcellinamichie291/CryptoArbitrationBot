@@ -44,7 +44,7 @@ class TradeSimulator {
     async computeDiffs(res, instance)
     {
       var diffs = new Array()
-      for(const diff of res)
+      for(var diff of res)
       {
           if(diff.diff > 0.8 && diff.diff < 50)
           {
@@ -65,6 +65,11 @@ class TradeSimulator {
               {
                   await burse.getCurrencyInfo(diff.pair)
                     .then( res => lowestCurrencyInfo=res)
+                    .catch(err => skipThePair = true)
+
+                  var currency = diff.pair.replace("_USDT", "")
+                  await burse.getWithdrawFee(currency)
+                    .then(res => diff.withdraw_fee=res.withdraw_fee)
                     .catch(err => skipThePair = true)
               }
             }

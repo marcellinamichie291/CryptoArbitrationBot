@@ -1,6 +1,7 @@
 bu = require("./Burse")
 const axios = require('axios');
 const fse = require('fs-extra');
+const crypto = require('crypto');
 
 class Mexc extends(bu){
     
@@ -180,6 +181,36 @@ class Mexc extends(bu){
     //     }
     //     return {}
     // }
+
+    getSign(timestamp, query)
+    {
+        return crypto.createHmac('sha256', this.getSecret()).update( this.getKey() + timestamp + query).digest("hex").toString()
+    }
+
+    getDepositAddress(currency)
+    {
+        return new Promise((reso, err) => {
+            const baseUrl = "https://www.mexc.com"
+            const stemp = new Date().getTime().toString()
+            //const path = "/open/api/v2/account/info"
+            const query = "currency=" + currency
+            const path = "/open/api/v2/asset/deposit/address/list?" + query
+            //const str = this.getKey() + stemp + query;
+            //const path = "/open/api/v2/market/api_symbols"
+            axios.get(baseUrl + path, {
+                headers: {
+                    'Content-Type':'application/json',
+                    "ApiKey":this.getKey(),
+                    "Request-Time":stemp,
+                    "Signature":this.getSign(stemp, query)
+                }
+            }).then(res => {
+                reso(res.data)
+            }).catch(e => { 
+                err(e)
+            })
+        })
+    }
 }
 
 module.exports = Mexc // 👈 Export class

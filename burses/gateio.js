@@ -1,6 +1,7 @@
 bu = require("./Burse")
 const axios = require('axios');
 const fse = require('fs-extra');
+const crypto = require('crypto');
 
 class Gateio extends(bu){
 
@@ -182,6 +183,44 @@ class Gateio extends(bu){
             .catch(error => {
                 reject(error)
             });
+        })
+    }
+    
+    getSign(method, prefix, url, query, payload, stamp)
+    {
+        var hash = crypto.createHash('sha512');
+        var data = hash.update(payload ? payload : "", 'utf-8');
+        var gen_hash = data.digest('hex');   
+        var toEncode = method + "\n" + prefix + url + '\n' + query + '\n' + gen_hash + '\n' + stamp
+        let encoded = crypto.createHmac('sha512', this.getSecret()).update(toEncode).digest("hex").toString()
+        return encoded
+    }
+
+    getDepositAddress(currency)
+    {
+        return new Promise((reso, err) => {
+            const currentTimestamp = Math.trunc(Date.now() / 1000)
+            var query_param = 'currency=' + currency
+            const payload_param = ""
+            const method = 'GET'
+            const host = "https://api.gateio.ws"
+            const prefix = "/api/v4"
+            const url = "/wallet/deposit_address"
+            var urlPlusParam = host + prefix + url
+            if(query_param)
+                urlPlusParam += '?' + query_param
+            
+            axios.get(urlPlusParam, {
+            headers: {
+                "KEY":this.getKey(),
+                "Timestamp":currentTimestamp,
+                "SIGN":this.getSign(method, prefix, url, query_param, payload_param, currentTimestamp)
+            }
+            }).then(res => {
+                reso(res.data)
+            }).catch(e => { 
+                err(e)
+            })
         })
     }
 }

@@ -2,6 +2,7 @@ bu = require("./Burse")
 const axios = require('axios');
 const fse = require('fs-extra');
 const he = require('../helper')
+const crypto = require('crypto');
 
 class Bitmart extends(bu){
 
@@ -16,6 +17,10 @@ class Bitmart extends(bu){
   
     getSecret(){
         return process.env.BITMART_SECRET
+    }
+
+    getMemo(){
+        return process.env.BITMART_MEMO
     }
 
     parsePairs() {
@@ -166,6 +171,36 @@ class Bitmart extends(bu){
     //     }
     //     throw "CANT FIND " + pair
     // }
+
+    getSign(query, timestamp)
+    {
+        var toEncode = timestamp + "#" + this.getMemo() + '#' + query
+        let encoded = crypto.createHmac('sha256', this.getSecret()).update(toEncode).digest("hex").toString()
+        return encoded
+    }
+
+    getDepositAddress(currency)
+    {
+        return new Promise((reso, err) => {
+            const currentTimestamp = Math.trunc(Date.now())
+            var query_param = 'currency=' + currency
+            var urlPlusParam = "https://api-cloud.bitmart.com/account/v1/deposit/address"
+            if(query_param)
+                urlPlusParam += '?' + query_param
+            
+            axios.get(urlPlusParam, {
+            headers: {
+                "X-BM-KEY":this.getKey(),
+                "X-BM-TIMESTAMP":currentTimestamp,
+                "X-BM-SIGN":this.getSign(query_param, currentTimestamp)
+            }
+            }).then(res => {
+                reso(res.data)
+            }).catch(e => { 
+                err(e)
+            })
+        })
+    }
 }
 
 module.exports = Bitmart // 👈 Export class

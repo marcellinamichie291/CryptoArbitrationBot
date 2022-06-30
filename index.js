@@ -13,6 +13,9 @@ burses.push(new bm())
 burses.push(new gi())
 burses.push(new me())
 
+//for(const burse of burses)
+//    burse.getDepositAddress("HERO").then(res => console.log(res))
+
 // helper = new Helper()
 // helper.timeoutAfter(10, onRefreshCurrenciesState, null)
 

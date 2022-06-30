@@ -1,7 +1,8 @@
 const he = require('./helper')
 const fse = require('fs-extra');
 const BursesComparator = require('./BursesPriceComparator')
-const PairsDepthComparator = require('./PairsDepthComparator')
+const PairsDepthComparator = require('./PairsDepthComparator');
+const logger = require('./logger');
 
 
 class TradeSimulator {
@@ -24,13 +25,13 @@ class TradeSimulator {
         setTimeout(this.onRefreshCurrenciesState, 1000, this);
 
         // this.burses[0].getCurrencyInfo("$HERO").then( res => {
-        //   console.log(res)
+        //   logger.verbose(JSON.stringify(res))
         //   }).catch(e => {
         //       console.error(e)
         //   })
 
         //   this.burses[0].getDepth("$HERO").then( res => {
-        //     console.log(res)
+        //     logger.verbose(JSON.stringify(res))
         //     }).catch(e => {
         //         console.error(e)
         //     })
@@ -55,17 +56,16 @@ class TradeSimulator {
               skipThePair = false
               if(burse.constructor.name === diff.highest)
               {
-                try {
-                  highestCurrencyInfo = await burse.getCurrencyInfo(diff.pair)  
-                } catch (error) {skipThePair = true; break}
+                  await burse.getCurrencyInfo(diff.pair)
+                    .then(res => highestCurrencyInfo=res)
+                    .catch(err => skipThePair = true)
               }
     
               if(burse.constructor.name === diff.lowest)
               {
-                try {
-                  lowestCurrencyInfo = await burse.getCurrencyInfo(diff.pair) 
-                  break
-                } catch (error) {skipThePair = true; break}
+                  await burse.getCurrencyInfo(diff.pair)
+                    .then( res => lowestCurrencyInfo=res)
+                    .catch(err => skipThePair = true)
               }
             }
     
@@ -74,22 +74,22 @@ class TradeSimulator {
               continue
             }
     
-            if(highestCurrencyInfo != undefined && highestCurrencyInfo.chain === "BEP20" || highestCurrencyInfo.chain === "BSC" && highestCurrencyInfo.deposit && 
-            lowestCurrencyInfo != undefined && lowestCurrencyInfo.chain === "BEP20" || lowestCurrencyInfo.chain === "BSC" && lowestCurrencyInfo.withdraw)
+            if(highestCurrencyInfo.chain === "BEP20" || highestCurrencyInfo.chain === "BSC" && highestCurrencyInfo.deposit && 
+               lowestCurrencyInfo.chain === "BEP20" || lowestCurrencyInfo.chain === "BSC" && lowestCurrencyInfo.withdraw)
             {
               diffs.push(diff)
             }
           }
       }
-      console.log("GET TICKERS DIFFERENCES FINISHED SUCCESSFUL")
-      console.log("GET DEPTH OF MARKETS")
+      logger.verbose("GET TICKERS DIFFERENCES FINISHED SUCCESSFUL")
+      logger.verbose("GET DEPTH OF MARKETS")
 
       instance.pc.compare(diffs)
   }
 
     async onRefreshCurrenciesState(instance) {
 
-        console.log("REFRESH TICKERS")
+        logger.verbose("REFRESH TICKERS")
         for(const burse of instance.burses)
         {
           //if("Bitmart" === burse.constructor.name)
@@ -97,13 +97,13 @@ class TradeSimulator {
           //  console.log(curr)
           await burse.onRefreshCurrenciesTick()
         }
-        console.log("REFRESH TICKERS FINISHED")
-        console.log("GET TICKERS DIFFERENCES")
+        logger.verbose("REFRESH TICKERS FINISHED")
+        logger.verbose("GET TICKERS DIFFERENCES")
         instance.bc.compare().then(res => instance.computeDiffs(res, instance))
     }
       
     pairsComparefinishedCallback(compare, instance) {
-        console.log("\nGET DEPTH OF MARKETS FINISHED SUCCESSFUL")
+        logger.verbose("\nGET DEPTH OF MARKETS FINISHED SUCCESSFUL")
       
         var output = ""
         for(const pair of compare)
@@ -123,18 +123,18 @@ class TradeSimulator {
                 output += "DEPTH DIFFERENCE FOR: "  + pair.pair + " IS " + diff + "\n"
                 output += "*********************************************************************************************\n"
       
-                // console.log("*********************************************************************************************")
-                // console.log("BUY AT: " + pair.buyBurse + " FOR: " + pair.buys[0].price + " AMOUNT: " + pair.buys[0].amount)
-                // console.log("SELL AT: " + pair.sellBurse + " FOR: " + pair.sells[0].price + " AMOUNT: " + pair.sells[0].amount)
+                // logger.verbose("*********************************************************************************************")
+                // logger.verbose("BUY AT: " + pair.buyBurse + " FOR: " + pair.buys[0].price + " AMOUNT: " + pair.buys[0].amount)
+                // logger.verbose("SELL AT: " + pair.sellBurse + " FOR: " + pair.sells[0].price + " AMOUNT: " + pair.sells[0].amount)
                 // sellFor = pair.sells[0].amount * pair.sells[0].price
                 // buyMax = Math.min(pair.sells[0].amount, pair.buys[0].amount)
-                // console.log("YOU CAN SELL FOR: " + sellFor + "$ MAX BUY: " + buyMax)
-                // console.log("DEPTH DIFFERENCE FOR: "  + pair.pair + " IS " + diff)
-                // console.log("*********************************************************************************************")
+                // logger.verbose("YOU CAN SELL FOR: " + sellFor + "$ MAX BUY: " + buyMax)
+                // logger.verbose("DEPTH DIFFERENCE FOR: "  + pair.pair + " IS " + diff)
+                // logger.verbose("*********************************************************************************************")
               }
           }
         }
-        console.log(output)
+        logger.info(output)
         fse.writeFileSync('./diffs.log', output);
 
         setTimeout(instance.onRefreshCurrenciesState, 1000, instance);

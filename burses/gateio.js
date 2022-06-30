@@ -19,7 +19,7 @@ class Gateio extends(bu){
     }
 
     parsePairs() {
-       // console.log("parsePairs Gateio")
+       // logger.verbose("parsePairs Gateio")
         axios
         .get('https://api.gateio.ws/api/v4/spot/currency_pairs')
         .then(res => {
@@ -32,7 +32,7 @@ class Gateio extends(bu){
           }
           //console.dir(this.pairs)
           //var roughObjSize = JSON.stringify(res.data).length;
-          console.log("Gateio found pairs: " + res.data.length);
+          logger.verbose("Gateio found pairs: " + res.data.length);
         })
         .catch(error => {
           console.error(error);
@@ -40,7 +40,7 @@ class Gateio extends(bu){
     }
 
     getTickers() {
-       // console.log("getTickers Gateio")
+       // logger.verbose("getTickers Gateio")
         return new Promise((resolve, reject) => {
             axios
             .get('https://api.gateio.ws/api/v4/spot/tickers')
@@ -53,7 +53,7 @@ class Gateio extends(bu){
                 }
                 //console.dir(this.prices)
                 //var roughObjSize = JSON.stringify(res.data.data).length;
-                //console.log(res.data.length);
+                //logger.verbose(JSON.stringify(res).data.length);
                 resolve(this.constructor.name)
             })
             .catch(error => {
@@ -64,7 +64,7 @@ class Gateio extends(bu){
     }
 
     getTicker(pair) {   
-       // console.log("getTicker Gateio")
+       // logger.verbose("getTicker Gateio")
         return new Promise((resolve, reject) => {
             var tickerRequest = 'https://api.gateio.ws/api/v4/spot/tickers?currency_pair='
             tickerRequest += pair
@@ -90,7 +90,7 @@ class Gateio extends(bu){
     }
 
     getDepth(pair, precision = 12) {
-       // console.log("getDepth Bitmart")
+       // logger.verbose("getDepth Bitmart")
         var asksDepth = new Array();
         var bidsDepth = new Array();
         return new Promise((resolve, reject) => {
@@ -206,6 +206,33 @@ class Gateio extends(bu){
             const host = "https://api.gateio.ws"
             const prefix = "/api/v4"
             const url = "/wallet/deposit_address"
+            var urlPlusParam = host + prefix + url
+            if(query_param)
+                urlPlusParam += '?' + query_param
+            
+            axios.get(urlPlusParam, {
+            headers: {
+                "KEY":this.getKey(),
+                "Timestamp":currentTimestamp,
+                "SIGN":this.getSign(method, prefix, url, query_param, payload_param, currentTimestamp)
+            }
+            }).then(res => {
+                reso(res.data)
+            }).catch(e => { 
+                err(e)
+            })
+        })
+    }
+
+    getWithdrawFee(currency){
+        return new Promise((reso, err) => {
+            const currentTimestamp = Math.trunc(Date.now() / 1000)
+            var query_param = 'currency=' + currency
+            const payload_param = ""
+            const method = 'GET'
+            const host = "https://api.gateio.ws"
+            const prefix = "/api/v4"
+            const url = "/wallet/withdraw_status"
             var urlPlusParam = host + prefix + url
             if(query_param)
                 urlPlusParam += '?' + query_param

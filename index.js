@@ -5,7 +5,8 @@ const me = require('./burses/mexc')
 const ts = require('./TradeSimulator')
 const TradeSimulator = require('./TradeSimulator')
 const Helper = require('./helper')
-
+const logger = require('./logger')
+require('./logger')
 //pairsToCompare = new Array("CFX_USDT", "KABY_USDT");
 
 var burses = []; 
@@ -14,7 +15,9 @@ burses.push(new gi())
 burses.push(new me())
 
 //for(const burse of burses)
-//    burse.getDepositAddress("HERO").then(res => console.log(res))
+    burses[0].getWithdrawFee("HERO").then(res => logger.verbose(JSON.stringify(res)))
+    burses[1].getWithdrawFee("HERO").then(res => logger.verbose(JSON.stringify(res)))
+    burses[2].getWithdrawFee("HERO").then(res => logger.verbose(JSON.stringify(res)))
 
 // helper = new Helper()
 // helper.timeoutAfter(10, onRefreshCurrenciesState, null)

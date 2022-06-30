@@ -19,7 +19,7 @@ class Mexc extends(bu){
     }
 
     parsePairs() {
-       // console.log("parsePairs Mexc")
+       // logger.verbose("parsePairs Mexc")
 
         axios
         .get('https://www.mexc.com/open/api/v2/market/symbols')
@@ -36,7 +36,7 @@ class Mexc extends(bu){
           }
           //console.dir(this.pairs)
           //var roughObjSize = JSON.stringify(res.data).length;
-          console.log("Mexc found pairs: " + res.data.data.length);
+          logger.verbose("Mexc found pairs: " + res.data.data.length);
         })
         .catch(error => {
           console.error(error);
@@ -44,7 +44,7 @@ class Mexc extends(bu){
     }
 
     getTickers() {
-       // console.log("getTickers Mexc")
+       // logger.verbose("getTickers Mexc")
         return new Promise((resolve, reject) => {
             axios
             .get('https://www.mexc.com/open/api/v2/market/ticker')
@@ -57,7 +57,7 @@ class Mexc extends(bu){
                 }
                 //console.dir(this.prices)
                 //var roughObjSize = JSON.stringify(res.data.data).length;
-                //console.log(res.data.length);
+                //logger.verbose(JSON.stringify(res).data.length);
                 resolve(this.constructor.name)
             })
             .catch(error => {
@@ -68,7 +68,7 @@ class Mexc extends(bu){
     }
 
     getTicker(pair) {   
-       // console.log("getTicker Mexc")
+       // logger.verbose("getTicker Mexc")
         return new Promise((resolve, reject) => {
             var tickerRequest = 'https://www.mexc.com/open/api/v2/market/ticker?symbol='
             tickerRequest += pair
@@ -103,7 +103,7 @@ class Mexc extends(bu){
     //     ]
     //   }
     getDepth(pair, precision = 12) {
-       // console.log("getDepth Mexc")
+       // logger.verbose("getDepth Mexc")
         var asksDepth = new Array();
         var bidsDepth = new Array();
         return new Promise((resolve, reject) => {
@@ -152,7 +152,7 @@ class Mexc extends(bu){
                             if(coin.chain === undefined)
                                 continue
                             var res = super.parseChainName(coin.chain)
-                            this.currencies.push({currency: currency.currency, chain:res, withdraw: coin.is_withdraw_enabled, deposit: coin.is_deposit_enabled})
+                            this.currencies.push({currency: currency.currency, chain:res, withdraw: coin.is_withdraw_enabled, deposit: coin.is_deposit_enabled, withdraw_fee: coin.fee})
                         } catch (error) {
                         }
                     }
@@ -165,22 +165,6 @@ class Mexc extends(bu){
             });
         })
     }
-
-    // getCurrencyInfo(pair)
-    // {
-    //     if(pair.includes("_USDT") === false)
-    //         return {}
-    //     pair = pair.replace("_USDT", "")
-        
-    //     for(const currency of this.currencies)
-    //     {
-    //         if(currency.currency === pair)
-    //         {
-    //             return {chain:currency.network, withdraw: currency.withdraw_enabled, deposit: currency.deposit_enabled}
-    //         }
-    //     }
-    //     return {}
-    // }
 
     getSign(timestamp, query)
     {
@@ -209,6 +193,23 @@ class Mexc extends(bu){
             }).catch(e => { 
                 err(e)
             })
+        })
+    }
+
+    getWithdrawFee(currency)
+    {
+        return new Promise(async(resolve, reject) => {
+
+            await this.onRefreshCurrenciesTick()
+
+            for(const curr of this.currencies)
+            {
+                if(curr.currency === currency)
+                {
+                    resolve({withdraw_fee:curr.withdraw_fee})
+                }
+            }
+            reject("NOT FOUND")
         })
     }
 }

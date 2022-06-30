@@ -59,19 +59,22 @@ require('dotenv').config();
 
     getCurrencyInfo(pair)
     {
-        if(pair.includes("_USDT") === false)
-            throw "PAIR DOES NOT CONTAINS _USD"
-        pair = pair.replace("_USDT", "")
-        
-        for(const currency of this.currencies)
-        {
-            if(currency.currency === pair)
-            {
-                return currency
-            }
-        }
-        throw "CANT FIND " + pair
-    }
+      return new Promise((reso, err) => {
+
+          if(pair.includes("_USDT") === false)
+              err("PAIR DOES NOT CONTAINS _USD")
+          pair = pair.replace("_USDT", "")
+          
+          for(const currency of this.currencies)
+          {
+              if(currency.currency === pair)
+              {
+                  reso(currency)
+              }
+          }
+          err("CANT FIND " + pair)
+      })
   }
+}
 
   module.exports = Burse // 👈 Export class

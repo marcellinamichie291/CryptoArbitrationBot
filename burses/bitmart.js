@@ -24,7 +24,7 @@ class Bitmart extends(bu){
     }
 
     parsePairs() {
-        //console.log("parsePairs Bitmart")
+        //logger.verbose("parsePairs Bitmart")
 
         axios
         .get('https://api-cloud.bitmart.com/spot/v1/symbols')
@@ -39,7 +39,7 @@ class Bitmart extends(bu){
             }
             //console.dir(this.pairs)
             //var roughObjSize = JSON.stringify(res.data.data).length;
-            console.log("Bitmart found pairs: " + res.data.data.symbols.length);
+            logger.verbose("Bitmart found pairs: " + res.data.data.symbols.length);
         })
         .catch(error => {
             console.error(error);
@@ -48,7 +48,7 @@ class Bitmart extends(bu){
     } 
 
     getTickers() {   
-        //console.log("getTickers Bitmart")
+        //logger.verbose("getTickers Bitmart")
         return new Promise((resolve, reject) => {
             axios
             .get('https://api-cloud.bitmart.com/spot/v1/ticker')
@@ -61,7 +61,7 @@ class Bitmart extends(bu){
                 }
                 //console.dir(this.prices)
                 //var roughObjSize = JSON.stringify(res.data.data).length;
-                //console.log(res.data.data.tickers.length);
+                //logger.verbose(JSON.stringify(res).data.data.tickers.length);
                 resolve(this.constructor.name)
             })
             .catch(error => {
@@ -72,7 +72,7 @@ class Bitmart extends(bu){
     }
 
     getTicker(pair) {   
-        //console.log("getTicker Bitmart")
+        //logger.verbose("getTicker Bitmart")
         return new Promise((resolve, reject) => {
             var tickerRequest = 'https://api-cloud.bitmart.com/spot/v1/ticker?symbol='
             tickerRequest += pair
@@ -99,7 +99,7 @@ class Bitmart extends(bu){
     }
 
     getDepth(pair, precision = 5) {
-        //console.log("getDepth Bitmart")
+        //logger.verbose("getDepth Bitmart")
         var asksDepth = new Array();
         var bidsDepth = new Array();
         return new Promise((resolve, reject) => {
@@ -110,10 +110,10 @@ class Bitmart extends(bu){
             axios
             .get(getDepthRequest)
             .then(res => {
-                for(const ask of res.data.data.buys) {
+                for(const ask of res.data.data.sells) {
                     asksDepth.push({price: ask.price, amount: ask.total})
                 }
-                for(const bid of res.data.data.sells) {
+                for(const bid of res.data.data.buys) {
                     bidsDepth.push({price: bid.price, amount: bid.total})
                 }
                 var depthOfPair = {pair: pair, burse: this.constructor.name, asks: asksDepth, bids: bidsDepth}
@@ -185,6 +185,28 @@ class Bitmart extends(bu){
             const currentTimestamp = Math.trunc(Date.now())
             var query_param = 'currency=' + currency
             var urlPlusParam = "https://api-cloud.bitmart.com/account/v1/deposit/address"
+            if(query_param)
+                urlPlusParam += '?' + query_param
+            
+            axios.get(urlPlusParam, {
+            headers: {
+                "X-BM-KEY":this.getKey(),
+                "X-BM-TIMESTAMP":currentTimestamp,
+                "X-BM-SIGN":this.getSign(query_param, currentTimestamp)
+            }
+            }).then(res => {
+                reso(res.data)
+            }).catch(e => { 
+                err(e)
+            })
+        })
+    }
+
+    getWithdrawFee(currency){
+        return new Promise((reso, err) => {
+            const currentTimestamp = Math.trunc(Date.now())
+            var query_param = 'currency=' + currency
+            var urlPlusParam = "https://api-cloud.bitmart.com/account/v1/withdraw/charge"
             if(query_param)
                 urlPlusParam += '?' + query_param
             

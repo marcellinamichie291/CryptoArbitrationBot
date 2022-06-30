@@ -15,7 +15,7 @@ class BursesPriceComparator {
         this.pairsToCompare = pairsToCompare
 
         if(this.pairsToCompare) {
-            console.log("COMPARE PAIRS: " + pairsToCompare)
+            logger.verbose("COMPARE PAIRS: " + pairsToCompare)
 
             if(this.tickerTimeoutTimerHandler)
             {
@@ -57,7 +57,7 @@ class BursesPriceComparator {
                        ticker.burse = burse.constructor.name
                         receivedTickers.push(ticker)
                     }
-                    //console.log("BURSE: " + burse.constructor.name + " FOUND " +  burse.prices + " TICKERS")
+                    //logger.verbose("BURSE: " + burse.constructor.name + " FOUND " +  burse.prices + " TICKERS")
                 }).catch(error => { console.error("FAILED TO GET TICKERS " + error); });
             }
             
@@ -85,7 +85,7 @@ class BursesPriceComparator {
         this.receivedTickers.push(res)
 
         if(this.receivedTickers.length === this.burses.length) {
-            //console.log("GET TICKERS SUCCESSFUL")
+            //logger.verbose("GET TICKERS SUCCESSFUL")
             this.beginCompareTickersArray()
             this.foundAllTickers = true
             this.receivedTickers = []

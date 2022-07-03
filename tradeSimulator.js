@@ -19,7 +19,7 @@ class TradeSimulator {
         const memeberCallbackProgress = { function:this.pairsCompareProgressCallback, 
                                    functionContext: this }
         this.pc = new PairsDepthComparator(this.burses, memeberCallbackFinished, memeberCallbackProgress)
-        this.bc = new BursesComparator(this.burses, this.tickersComparefinishedCallback, this);
+        this.bc = new BursesComparator(this.burses);
         //this.helper.timeoutAfter(1, this.runTimerTick)
         //this.helper.timeoutAfter(60, this.onRefreshCurrenciesState, this)
         setTimeout(this.onRefreshCurrenciesState, 1000, this);
@@ -70,12 +70,6 @@ class TradeSimulator {
                     .catch(err => skipThePair = true)
                   if(skipThePair === true)
                     break;
-                  var currency = diff.pair.replace("_USDT", "")
-                  await burse.getWithdrawFee(currency)
-                    .then(res => diff.withdraw_fee=res.withdraw_fee)
-                    .catch(err => skipThePair = true)
-                  if(skipThePair === true)
-                    break;
               }
             }
     
@@ -83,7 +77,7 @@ class TradeSimulator {
             {
               continue
             }
-    
+   
             if(highestCurrencyInfo.chain === "BEP20" || highestCurrencyInfo.chain === "BSC" && highestCurrencyInfo.deposit && 
                lowestCurrencyInfo.chain === "BEP20" || lowestCurrencyInfo.chain === "BSC" && lowestCurrencyInfo.withdraw)
             {
@@ -120,6 +114,16 @@ class TradeSimulator {
         {
           if(pair.buys.length > 0 && pair.sells.length > 0)
           {
+              var buyMax = Math.min(pair.sells[0].amount, pair.buys[0].amount)
+              var sellFor = buyMax * pair.sells[0].price
+              var buyFor = buyMax * pair.buys[0].price
+              var profit = sellFor - buyFor
+
+              if(pair.buys[0].price*pair.withdraw_fee + ((buyFor/100)*10) >= profit)
+              {
+                continue;
+              }
+                    
               var diff = 100-((pair.buys[0].price / pair.sells[0].price)*100)
               if(diff > 2 && diff < 100)
               {
@@ -127,10 +131,9 @@ class TradeSimulator {
                 output += "*********************************************************************************************\n"
                 output += "BUY AT: " + pair.buyBurse + " FOR: " + pair.buys[0].price + " AMOUNT: " + pair.buys[0].amount + "\n"
                 output += "SELL AT: " + pair.sellBurse + " FOR: " + pair.sells[0].price + " AMOUNT: " + pair.sells[0].amount + "\n"
-                var sellFor = pair.sells[0].amount * pair.sells[0].price
-                var buyMax = Math.min(pair.sells[0].amount, pair.buys[0].amount)
-                output += "YOU CAN SELL FOR: " + sellFor + "$ MAX BUY: " + buyMax + "\n"
-                output += "DEPTH DIFFERENCE FOR: "  + pair.pair + " IS " + diff + "\n"
+                output += "BUY FOR: " + buyFor + "$ MAX BUY: " + buyMax + "\n"
+                output += "SELL FOR: " + sellFor + "$ MAX BUY: " + buyMax + "\n"
+                output += "DEPTH DIFFERENCE FOR: "  + pair.pair + " IS " + diff + " PROFIT POTENTIAL: " + profit + "$\n"
                 output += "*********************************************************************************************\n"
       
                 // logger.verbose("*********************************************************************************************")

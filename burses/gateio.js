@@ -5,6 +5,9 @@ const crypto = require('crypto');
 
 class Gateio extends(bu){
 
+    delistPairs = 
+        ["HERO_USDT"]
+
     constructor()
     {
         super()
@@ -49,6 +52,10 @@ class Gateio extends(bu){
                 //fse.outputJsonSync('./tickers_gateio.json', res.data);
                 for(const ticker of res.data)
                 {
+                    if(this.delistPairs.some((item) => {
+                        item === ticker.currency_pair
+                    }))
+                        continue
                     this.prices.push({pair: ticker.currency_pair, last_price: ticker.last})
                 }
                 //console.dir(this.prices)
@@ -74,6 +81,12 @@ class Gateio extends(bu){
                 var pair;
                 for(const ticker of res.data)
                 {
+                    if(this.delistPairs.some((item) => {
+                        item === ticker.currency_pair
+                    }))
+                    {
+                        reject("is delisted")
+                    }
                     pair = {burse: this.constructor.name, pair: ticker.currency_pair, last_price: ticker.last}
                 }
                 resolve(pair)

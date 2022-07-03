@@ -6,6 +6,9 @@ const crypto = require('crypto');
 
 class Bitmart extends(bu){
 
+    delistPairs = 
+        ["HERO_USDT"]
+
     constructor()   
     {
         super()
@@ -57,6 +60,10 @@ class Bitmart extends(bu){
                 //fse.outputJsonSync('./tickers_bitmart.json', res.data);
                 for(const ticker of res.data.data.tickers)
                 {
+                    if(this.delistPairs.some((item) => {
+                        item === ticker.symbol
+                    }))
+                        continue
                     this.prices.push({pair: ticker.symbol, last_price: ticker.last_price})
                 }
                 //console.dir(this.prices)
@@ -82,6 +89,12 @@ class Bitmart extends(bu){
                 var pair;
                 for(const ticker of res.data.data.tickers)
                 {
+                    if(this.delistPairs.some((item) => {
+                        item === ticker.symbol
+                    }))
+                    {
+                        reject("is delisted")
+                    }
                     pair = {burse: this.constructor.name, pair: ticker.symbol, last_price: ticker.last_price}
                 }
 

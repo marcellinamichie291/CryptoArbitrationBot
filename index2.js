@@ -16,8 +16,10 @@ burses.push(new me())
 
 for(const burse of burses)
 {
-    burse.getCurrencyInfo("PSP_USDT").then(res => logger.verbose(burse.constructor.name + ": " + JSON.stringify(res)))
-    .then(res => logger.verbose(burse.constructor.name + ": " + JSON.stringify(res)))
-    .catch(err => logger.error(burse.constructor.name + ": " + JSON.stringify(err)))
-    //burse.getWithdrawFee("EMPIRE").then(res => logger.verbose(burse.constructor.name + ": " + JSON.stringify(res)))
+   // burse.getCurrencyInfo("PSP_USDT").then(res => logger.verbose(burse.constructor.name + ": " + JSON.stringify(res)))
+   // .then(res => logger.verbose(burse.constructor.name + ": " + JSON.stringify(res)))
+   // .catch(err => logger.error(burse.constructor.name + ": " + JSON.stringify(err)))
+    //burse.getWithdrawFee("FLOKI").then(res => logger.verbose(burse.constructor.name + ": " + JSON.stringify(res)))
 }
+
+burses[0].getWithdrawFee("FLOKI").then(res => logger.verbose( JSON.stringify(res)))

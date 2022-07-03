@@ -61,7 +61,7 @@ class Bitmart extends(bu){
                 for(const ticker of res.data.data.tickers)
                 {
                     if(this.delistPairs.some((item) => {
-                        item === ticker.symbol
+                        return item === ticker.symbol
                     }))
                         continue
                     this.prices.push({pair: ticker.symbol, last_price: ticker.last_price})
@@ -90,7 +90,7 @@ class Bitmart extends(bu){
                 for(const ticker of res.data.data.tickers)
                 {
                     if(this.delistPairs.some((item) => {
-                        item === ticker.symbol
+                        return item === ticker.symbol
                     }))
                     {
                         reject("is delisted")

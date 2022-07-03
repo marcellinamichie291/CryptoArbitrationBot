@@ -52,8 +52,9 @@ class Gateio extends(bu){
                 //fse.outputJsonSync('./tickers_gateio.json', res.data);
                 for(const ticker of res.data)
                 {
+
                     if(this.delistPairs.some((item) => {
-                        item === ticker.currency_pair
+                        return item === ticker.currency_pair
                     }))
                         continue
                     this.prices.push({pair: ticker.currency_pair, last_price: ticker.last})
@@ -82,7 +83,7 @@ class Gateio extends(bu){
                 for(const ticker of res.data)
                 {
                     if(this.delistPairs.some((item) => {
-                        item === ticker.currency_pair
+                        return item === ticker.currency_pair
                     }))
                     {
                         reject("is delisted")

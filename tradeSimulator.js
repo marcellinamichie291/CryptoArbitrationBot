@@ -96,9 +96,6 @@ class TradeSimulator {
         logger.verbose("REFRESH TICKERS")
         for(const burse of instance.burses)
         {
-          //if("Bitmart" === burse.constructor.name)
-          //for(const curr of await burse.onRefreshCurrenciesTick())
-          //  console.log(curr)
           await burse.onRefreshCurrenciesTick()
         }
         logger.verbose("REFRESH TICKERS FINISHED")
@@ -114,15 +111,16 @@ class TradeSimulator {
         {
           if(pair.buys.length > 0 && pair.sells.length > 0)
           {
-              var buyMax = Math.min(pair.sells[0].amount, pair.buys[0].amount)
-              var sellFor = buyMax * pair.sells[0].price
-              var buyFor = buyMax * pair.buys[0].price
-              var profit = sellFor - buyFor
-              var fee = pair.buys[0].price*pair.withdraw_fee + ((buyFor/100)*10)
+              const buyMax = Math.min(pair.sells[0].amount, pair.buys[0].amount)
+              const sellFor = buyMax * pair.sells[0].price
+              const buyFor = buyMax * pair.buys[0].price
+              const profit = sellFor - buyFor
+              const fee = pair.buys[0].price*pair.withdraw_fee + ((buyFor/100)*15)
+              const profitDiff = profit - fee
 
-              if(fee >= profit)
+              if(fee >= profit && profitDiff < -1)
               {
-                logger.verbose("SKIP: " + pair.pair + " PROFIT: " + profit + "$ FEE: " + fee + "$ POTENTIAL: " + (profit - fee) + "$")
+                logger.verbose("SKIP: " + pair.pair + " PROFIT: " + profit + "$ FEE: " + fee + "$ POTENTIAL: " + profitDiff + "$")
                 continue
               }
                     

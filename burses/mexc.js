@@ -138,7 +138,7 @@ class Mexc extends(bu){
     {
         return new Promise((resolve, reject) => {
             const currentDatetimeTs = Date.now()
-            if(currentDatetimeTs - this.lastCurrenciesUpdate < 6000)
+            if(currentDatetimeTs - this.lastCurrenciesUpdate < 10000)
                 reject("RECENTLY REFRESHED")
 
             this.currencies = []
@@ -161,7 +161,7 @@ class Mexc extends(bu){
                 resolve(this.currencies)
             })
             .catch(error => {
-                reject(error)
+                reject("FAILED TO GET " + this.constructor.name + " CURRENCIES INFO.")
             });
         })
     }

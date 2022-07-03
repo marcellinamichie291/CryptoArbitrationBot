@@ -62,7 +62,7 @@ class PairsDepthComparator {
             }
             if(error === false && skip === false)
             {
-                comparedPairs.push({pair: pair.pair, buyBurse: buysBurse, sellBurse: sellsBurse, buys: buys, sells: sells})
+                comparedPairs.push({pair: pair.pair, buyBurse: buysBurse, sellBurse: sellsBurse, buys: buys, sells: sells, withdraw_fee: withdraw_fee})
             }
             this.progressCallback(comparedPairs.length + "/" + (pairs.length - errors - skipped), this.progressCallbackInstance)
         }

@@ -118,10 +118,12 @@ class TradeSimulator {
               var sellFor = buyMax * pair.sells[0].price
               var buyFor = buyMax * pair.buys[0].price
               var profit = sellFor - buyFor
+              var fee = pair.buys[0].price*pair.withdraw_fee + ((buyFor/100)*10)
 
-              if(pair.buys[0].price*pair.withdraw_fee + ((buyFor/100)*10) >= profit)
+              if(fee >= profit)
               {
-                continue;
+                logger.verbose("SKIP: " + pair.pair + " PROFIT: " + profit + "$ FEE: " + fee + "$ POTENTIAL: " + (profit - fee) + "$")
+                continue
               }
                     
               var diff = 100-((pair.buys[0].price / pair.sells[0].price)*100)

@@ -237,49 +237,33 @@ class Bitmart extends(bu){
         })
     }
 
-    createOrder(pair, buy, amount, type = "market"){
+    createOrder(pair, buy, amount, market = true){
         return new Promise((reso, err) => {
-            var jsonBody = {symbol:pair}
             const currentTimestamp = Math.trunc(Date.now())
-            //var queryParams = 'symbol=' + pair + "&"
-            if(buy)
-            {
-                jsonBody.side = "buy"
-                jsonBody.type = type
-                jsonBody.notional = amount
-                jsonBody.size = amount
-                //queryParams = "side=buy&"
-                //queryParams += "type=market&"
-                //queryParams += "notional=" + amount + "&"
-                //queryParams += "size=" + amount
-            }
-            else
-            {
-                jsonBody.side = "sell"
-                jsonBody.type = type
-                jsonBody.notional = 0
-                jsonBody.size = amount
-                //queryParams = "side=sell&"
-                //queryParams += "type=market&"
-                //queryParams += "size=" + amount + "&"
-                //queryParams += "notional=0"
-            }
-
             var urlPlusParam = "https://api-cloud.bitmart.com/spot/v1/submit_order"
-            //urlPlusParam += '?' + queryParams
-            console.log(jsonBody)
-            const header = {
-                'Content-Type':'application/json',
-                "X-BM-KEY":this.getKey(),
-                "X-BM-TIMESTAMP":currentTimestamp,
-                "X-BM-SIGN":this.getSign(jsonBody, currentTimestamp)
-            }
-            console.log(header)
-            axios.post(urlPlusParam, jsonBody, header).then(res => {
-                reso(res.data)
-            }).catch(e => { 
-                err(e)
+             const postArticle = { 
+                "symbol":pair,
+                "side":buy?"buy":"sell",
+                "type":market?"market":"limit",
+                "notional":buy?amount:0,
+                "size":buy?0:amount
+            };
+            const postHeader = { 
+                'Content-Type': 'application/json',
+                'X-BM-KEY':this.getKey(),
+                'X-BM-TIMESTAMP':currentTimestamp,
+                'X-BM-SIGN':this.getSign(JSON.stringify(postArticle), currentTimestamp)
+            };
+            axios.post(urlPlusParam, postArticle, {
+                headers: postHeader
             })
+            .then((response) => {
+                reso(response.data)
+            })
+            .catch((error) => {
+                err(error)
+            })
+            
         })
     }
 }

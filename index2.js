@@ -23,13 +23,15 @@ for(const burse of burses)
 }
 
 //burses[0].getWithdrawFee("FLOKI").then(res => logger.verbose( JSON.stringify(res)))
-burses[0].createOrder("BTC_USDT", true, "0.000055", "market").then(res => logger.verbose( JSON.stringify(res)))
+
+// buy USD sell BTC
+burses[0].createOrder("BTC_USDT", false, "0.00049000").then(res => logger.verbose( JSON.stringify(res)))
     .catch(err => logger.error( JSON.stringify(err)))
 
-burses[1].createOrder("BTC_USDT", true, "0.000055", "18000", 2).then(res => logger.verbose( JSON.stringify(res)))
-    .catch(err => logger.error( JSON.stringify(err)))
+// burses[1].createOrder("BTC_USDT", true, "0.000055", "18000", 2).then(res => logger.verbose( JSON.stringify(res)))
+//     .catch(err => logger.error( JSON.stringify(err)))
 
-burses[2].createOrder("BTC_USDT", true, "0.000055", "18000").then(res => logger.verbose( JSON.stringify(res)))
-    .catch(err => logger.error( JSON.stringify(err)))
+// burses[2].createOrder("BTC_USDT", true, "0.000055", "18000").then(res => logger.verbose( JSON.stringify(res)))
+//     .catch(err => logger.error( JSON.stringify(err)))
 
     

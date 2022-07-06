@@ -212,6 +212,33 @@ class Mexc extends(bu){
             reject("NOT FOUND")
         })
     }
+
+    createOrder(pair, buy, price, amount)
+    {
+        return new Promise((reso, err) => {
+            const baseUrl = "https://www.mexc.com"
+            const stemp = new Date().getTime().toString()
+            //const path = "/open/api/v2/account/info"
+            const path = "/open/api/v2/order/place"
+                        //const str = this.getKey() + stemp + query;
+            //const path = "/open/api/v2/market/api_symbols"
+            var jsonBody = {symbol:pair, price: price, quantity:amount, trade_type: buy? "ask":"bid",
+                            order_type:"IMMEDIATE_OR_CANCEL"}
+            logger.debug(jsonBody)
+            axios.post(baseUrl + path, jsonBody, {
+                headers: {
+                    'Content-Type':'application/json',
+                    "ApiKey":this.getKey(),
+                    "Request-Time":stemp,
+                    "Signature":this.getSign(stemp, jsonBody)
+                }
+            }).then(res => {
+                reso(res.data)
+            }).catch(e => { 
+                err(e)
+            })
+        })
+    }
 }
 
 module.exports = Mexc // 👈 Export class

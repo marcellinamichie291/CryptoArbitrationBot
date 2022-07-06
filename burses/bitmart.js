@@ -236,6 +236,52 @@ class Bitmart extends(bu){
             })
         })
     }
+
+    createOrder(pair, buy, amount, type = "market"){
+        return new Promise((reso, err) => {
+            var jsonBody = {symbol:pair}
+            const currentTimestamp = Math.trunc(Date.now())
+            //var queryParams = 'symbol=' + pair + "&"
+            if(buy)
+            {
+                jsonBody.side = "buy"
+                jsonBody.type = type
+                jsonBody.notional = amount
+                jsonBody.size = amount
+                //queryParams = "side=buy&"
+                //queryParams += "type=market&"
+                //queryParams += "notional=" + amount + "&"
+                //queryParams += "size=" + amount
+            }
+            else
+            {
+                jsonBody.side = "sell"
+                jsonBody.type = type
+                jsonBody.notional = 0
+                jsonBody.size = amount
+                //queryParams = "side=sell&"
+                //queryParams += "type=market&"
+                //queryParams += "size=" + amount + "&"
+                //queryParams += "notional=0"
+            }
+
+            var urlPlusParam = "https://api-cloud.bitmart.com/spot/v1/submit_order"
+            //urlPlusParam += '?' + queryParams
+            console.log(jsonBody)
+            const header = {
+                'Content-Type':'application/json',
+                "X-BM-KEY":this.getKey(),
+                "X-BM-TIMESTAMP":currentTimestamp,
+                "X-BM-SIGN":this.getSign(jsonBody, currentTimestamp)
+            }
+            console.log(header)
+            axios.post(urlPlusParam, jsonBody, header).then(res => {
+                reso(res.data)
+            }).catch(e => { 
+                err(e)
+            })
+        })
+    }
 }
 
 module.exports = Bitmart // 👈 Export class

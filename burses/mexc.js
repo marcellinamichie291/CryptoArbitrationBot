@@ -168,7 +168,7 @@ class Mexc extends(bu){
 
     getSign(timestamp, query)
     {
-        return crypto.createHmac('sha256', this.getSecret()).update( this.getKey() + timestamp + query).digest("hex").toString()
+        return crypto.createHmac('sha256', this.getSecret()).update( this.getKey() + timestamp + query).digest("hex").toString()    
     }
 
     getDepositAddress(currency)
@@ -216,26 +216,30 @@ class Mexc extends(bu){
     createOrder(pair, buy, price, amount)
     {
         return new Promise((reso, err) => {
-            const baseUrl = "https://www.mexc.com"
+            const url = "https://www.mexc.com/open/api/v2/order/place"
             const stemp = new Date().getTime().toString()
-            //const path = "/open/api/v2/account/info"
-            const path = "/open/api/v2/order/place"
-                        //const str = this.getKey() + stemp + query;
-            //const path = "/open/api/v2/market/api_symbols"
-            var jsonBody = {symbol:pair, price: price, quantity:amount, trade_type: buy? "ask":"bid",
-                            order_type:"IMMEDIATE_OR_CANCEL"}
-            logger.debug(jsonBody)
-            axios.post(baseUrl + path, jsonBody, {
-                headers: {
-                    'Content-Type':'application/json',
-                    "ApiKey":this.getKey(),
-                    "Request-Time":stemp,
-                    "Signature":this.getSign(stemp, jsonBody)
-                }
+            const body = {
+                'symbol':pair,
+                'price': price,
+                'quantity':amount,
+                'trade_type': buy?"ASK":"BID",
+                'order_type':"LIMIT_ORDER"
+            }
+            const sign = this.getSign(stemp, JSON.stringify(body))
+            const header = {
+                'Content-Type':'application/json',
+                "ApiKey":this.getKey(),
+                "Request-Time":stemp,
+                "Signature":sign
+            }
+            console.log(body)
+            console.log(header)
+            axios.post(url, body, {
+                headers: header
             }).then(res => {
                 reso(res.data)
             }).catch(e => { 
-                err(e)
+                err(e.response.data)
             })
         })
     }

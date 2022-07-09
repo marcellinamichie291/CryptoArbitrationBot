@@ -265,30 +265,41 @@ class Gateio extends(bu){
         })
     }
 
-    createOrder(pair, buy, price, amount, timeout_sec)
+    createOrder(pair, buy, price, amount)
     {
         return new Promise((reso, err) => {
             const currentTimestamp = Math.trunc(Date.now() / 1000)
-            var jsonBody = {currency_pair:pair, side:buy?"ask":"bid", amount:amount, price:price, time_in_force:timeout_sec}
             const method = 'POST'
             const host = "https://api.gateio.ws"
             const prefix = "/api/v4"
             const url = "/spot/orders"
-            var urlPlusParam = host + prefix + url
+            const urlPlusParam = host + prefix + url
+            //const sign = this.getSign("POST", "/api/v4", "/spot/orders", "", JSON.stringify(jsonBod), currentTimestam)
 
-            //if(query_param)
-            //    urlPlusParam += '?' + query_param
-            
-            axios.post(urlPlusParam, jsonBody,{
-            headers: {
-                "KEY":this.getKey(),
-                "Timestamp":currentTimestamp,
-                "SIGN":this.getSign(method, prefix, url, query_param, jsonBody, currentTimestamp)
+            const jsonBody =
+            { 
+                currency_pair:pair,
+                side:buy?"buy":"sell",
+                amount:amount,
+                price:price         
             }
+
+            const sign = this.getSign(method, prefix, url, "", JSON.stringify(jsonBody), currentTimestamp)
+
+            const header = {
+                'Accept':'application/json',
+                'Content-Type':'application/json',
+                'KEY':this.getKey(),
+                'Timestamp':currentTimestamp,
+                'SIGN':sign//this.getSign(method, prefix, url, "", JSON.stringify(jsonBody), currentTimestamp)
+            }
+
+            axios.post(urlPlusParam, jsonBody,{
+                headers:header
             }).then(res => {
                 reso(res.data)
             }).catch(e => { 
-                err(e)
+                err(e.response.data)
             })
         })
     }

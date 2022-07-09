@@ -78,8 +78,8 @@ class TradeSimulator {
               continue
             }
    
-            if(highestCurrencyInfo.chain === "BEP20" || highestCurrencyInfo.chain === "BSC" && highestCurrencyInfo.deposit && 
-               lowestCurrencyInfo.chain === "BEP20" || lowestCurrencyInfo.chain === "BSC" && lowestCurrencyInfo.withdraw)
+            if((highestCurrencyInfo.chain === "BEP20" || highestCurrencyInfo.chain === "BSC") && highestCurrencyInfo.deposit === true && 
+               (lowestCurrencyInfo.chain === "BEP20" || lowestCurrencyInfo.chain === "BSC") && lowestCurrencyInfo.withdraw === true)
             {
               diffs.push(diff)
             }
@@ -118,7 +118,7 @@ class TradeSimulator {
               const fee = pair.buys[0].price*pair.withdraw_fee + ((buyFor/100)*15)
               const profitDiff = profit - fee
 
-              if(fee >= profit && profitDiff < -1)
+              if(fee >= profit && profitDiff < -1 && profit < 0.3)
               {
                 logger.verbose("SKIP: " + pair.pair + " PROFIT: " + profit + "$ FEE: " + fee + "$ POTENTIAL: " + profitDiff + "$")
                 continue

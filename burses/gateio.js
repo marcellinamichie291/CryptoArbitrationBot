@@ -265,6 +265,40 @@ class Gateio extends(bu){
         })
     }
 
+    withdraw(currency, amount, address, address_memo, chain="BSC")
+    {
+        return new Promise((reso, err) => {
+            const currentTimestamp = Math.trunc(Date.now() / 1000)
+            const method = 'POST'
+            const host = "https://api.gateio.ws"
+            const prefix = "/api/v4"
+            const url = "/withdrawals"
+            const urlPlusParam = host + prefix + url
+
+            const body = { 
+                "currency":currency,
+                "amount":amount,
+                "address":address,
+                "address_memo":address_memo,
+                "chain":chain
+            }
+            const header = {
+                'Accept':'application/json',
+                'Content-Type':'application/json',
+                'KEY':this.getKey(),
+                'Timestamp':currentTimestamp,
+                'SIGN':this.getSign(method, prefix, url, "", JSON.stringify(body), currentTimestamp)
+            }
+            axios.post(urlPlusParam, body,{
+                headers:header
+            }).then(res => {
+                reso(res.data)
+            }).catch(e => { 
+                err(e.response.data)
+            })
+        })
+    }
+
     createOrder(pair, buy, price, amount)
     {
         return new Promise((reso, err) => {
@@ -281,7 +315,7 @@ class Gateio extends(bu){
                 currency_pair:pair,
                 side:buy?"buy":"sell",
                 amount:amount,
-                price:price         
+                price:price
             }
 
             const sign = this.getSign(method, prefix, url, "", JSON.stringify(jsonBody), currentTimestamp)

@@ -213,6 +213,34 @@ class Mexc extends(bu){
         })
     }
 
+
+    withdraw(currency, amount, address, address_memo, chain="BEP-20")
+    {
+        return new Promise((reso, err) => {
+            const url = "https://www.mexc.com/open/api/v2/asset/withdraw"
+            const stemp = new Date().getTime().toString()
+            const body = {
+                "currency":currency,
+                "amount":amount,
+                "address":address += address_memo?":"+address_memo:"",
+                "chain":chain
+            }
+            const header = {
+                'Content-Type':'application/json',
+                "ApiKey":this.getKey(),
+                "Request-Time":stemp,
+                "Signature":this.getSign(stemp, JSON.stringify(body))
+            }
+            axios.post(url, body, {
+                headers: header
+            }).then(res => {
+                reso(res.data)
+            }).catch(e => { 
+                err(e.response.data)
+            })
+        })
+    }
+
     createOrder(pair, buy, price, amount)
     {
         return new Promise((reso, err) => {

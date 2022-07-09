@@ -237,6 +237,36 @@ class Bitmart extends(bu){
         })
     }
 
+    withdraw(currency, amount, address, address_memo){
+        return new Promise((reso, err) => {
+            const currentTimestamp = Math.trunc(Date.now())
+            var urlPlusParam = "https://api-cloud.bitmart.com/account/v1/withdraw/apply"
+             const body = { 
+                "currency":currency,
+                "amount":amount,
+                "destination":"To Digital Address",
+                "address":address,
+                "address_memo":address_memo
+            };
+            const postHeader = { 
+                'Content-Type': 'application/json',
+                'X-BM-KEY':this.getKey(),
+                'X-BM-TIMESTAMP':currentTimestamp,
+                'X-BM-SIGN':this.getSign(JSON.stringify(body), currentTimestamp)
+            };
+            axios.post(urlPlusParam, body, {
+                headers: postHeader
+            })
+            .then((response) => {
+                reso(response.data)
+            })
+            .catch((error) => {
+                err(error.response.data)
+            })
+            
+        })
+    }
+
     createOrder(pair, buy, amount, market = true){
         return new Promise((reso, err) => {
             const currentTimestamp = Math.trunc(Date.now())
@@ -261,7 +291,7 @@ class Bitmart extends(bu){
                 reso(response.data)
             })
             .catch((error) => {
-                err(error)
+                err(error.response.data)
             })
             
         })

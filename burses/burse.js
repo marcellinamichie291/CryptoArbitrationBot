@@ -60,7 +60,6 @@ require('dotenv').config();
     getCurrencyInfo(pair)
     {
       return new Promise((reso, err) => {
-
           if(pair.includes("_USDT") === false)
               err("PAIR DOES NOT CONTAINS _USD")
           pair = pair.replace("_USDT", "")
@@ -69,6 +68,13 @@ require('dotenv').config();
           {
               if(currency.currency === pair)
               {
+                if(currency.currency === "DVDX_USDT")
+                {
+                  var ddwad = {}
+                  console.log(currency)
+                  console.log("IN")
+                }
+
                   reso(currency)
               }
           }

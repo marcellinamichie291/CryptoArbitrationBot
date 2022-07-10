@@ -48,7 +48,7 @@ for(const burse of burses)
 //burses[2].withdraw("HERO", "0.0001", "", "").then(res => logger.verbose( JSON.stringify(res)))
 //     .catch(err => logger.error( JSON.stringify(err)))
 
-//buy(11,"CTT_USDT", "Gateio", burses)
+buy("VLXPAD_USDT", "Mexc", burses)
 
 // burses[1].createOrder("CTT_USDT", false, "1.8789", "1.049624").then(res => logger.verbose( JSON.stringify(res)))
 // .catch(err => {
@@ -56,13 +56,7 @@ for(const burse of burses)
 //     throw "Failed to create Gateio order"
 // })
 
-burses[0].getBalance().then(res => console.log(res))
- .catch(err => {
-     logger.error(JSON.stringify(err))
-     throw "Failed to create Gateio order"
- })
-
-async function buy(forUsd, pair, burseName, burses)
+async function buy(pair, burseName, burses)
 {
     try
     {
@@ -76,11 +70,37 @@ async function buy(forUsd, pair, burseName, burses)
             }
         }
 
+        var forUsd = 0;
+        await selectedBurse.getBalance().then(res => {
+            res.forEach(element => {
+                if(element.currency === "USDT")
+                forUsd = element.available
+            });
+        })
+        .catch(err => {
+            logger.error(JSON.stringify(err))
+            throw "Failed to create Gateio order"
+        })
+        logger.verbose(forUsd + "USDT at " + selectedBurse.constructor.name)
+
+        if(forUsd < 0.1)
+        {
+            //throw "Small amount of USDT"
+        }
+
         if(burseName === "Bitmart")
         {
-            logger.verbose("BUY for: " + forUsd + "$")
+            var depth = {}
+            await selectedBurse.getDepth(pair).then(res => depth = res)
+                .catch(err => {
+                    throw "FAILED TO GET DEPTH"
+                })
+            
+            const usdForOrderAmount = depth.asks[0].price*depth.asks[0].amount
+            const buyFor = Math.min(usdForOrderAmount,forUsd)
+            logger.verbose("BUY: " + buyFor/depth.asks[0].price + " tokens for: " + buyFor + "$")
             // buy USD sell BTC
-            await selectedBurse.createOrder(pair, true, forUsd).then(res => logger.verbose( JSON.stringify(res)))
+            await selectedBurse.createOrder(pair, true, buyFor).then(res => logger.verbose( JSON.stringify(res)))
                 .catch(err => {
                     throw "Failed to create Bitmart order"
                 })
@@ -93,8 +113,10 @@ async function buy(forUsd, pair, burseName, burses)
                     throw "FAILED TO GET DEPTH"
                 })
             
-            const buyAmount = forUsd/depth.asks[0].price
-            logger.verbose("BUY: " + buyAmount + " tokens")
+            const usdForOrderAmount = depth.asks[0].price*depth.asks[0].amount
+            const buyFor = Math.min(usdForOrderAmount,forUsd)
+            const buyAmount = buyFor/depth.asks[0].price
+            logger.verbose("BUY: " + buyFor/depth.asks[0].price + " tokens for: " + buyFor + "$")
             //                                        USD,  CURRENCY
             await selectedBurse.createOrder(pair, true, depth.asks[0].price, buyAmount).then(res => logger.verbose( JSON.stringify(res)))
                 .catch(err => {
@@ -105,16 +127,19 @@ async function buy(forUsd, pair, burseName, burses)
         else if(burseName === "Mexc")
         {
             var depth = {}
-            await selectedBurse.getDepth(pair, true, "1200", "0.001").then(res => depth = res)
+            await selectedBurse.getDepth(pair).then(res => depth = res)
             .catch(err => {
                 throw "FAILED TO GET DEPTH"
             })
-            const buyAmount = forUsd/depth.asks[0].price
-            logger.verbose("BUY: " + buyAmount + " tokens")
+
+            const usdForOrderAmount = depth.asks[0].price*depth.asks[0].amount
+            const buyFor = Math.min(usdForOrderAmount,forUsd)
+            const buyAmount = buyFor/depth.asks[0].price
+            logger.verbose("BUY: " + buyFor/depth.asks[0].price + " tokens for: " + buyFor + "$")
             //                                        USD,  CURRENCY
-            await selectedBurse.createOrder(pair, true, depth.buy[0].price, buyAmount).then(res => logger.verbose( JSON.stringify(res)))
+            await selectedBurse.createOrder(pair, true, depth.asks[0].price, buyAmount).then(res => logger.verbose( JSON.stringify(res)))
                 .catch(err => {
-                    throw "Failed to create Mexc order"
+                    throw "Failed to create Mexc order Error: " + JSON.stringify(err)
                 })
         }
         else
@@ -176,7 +201,7 @@ async function sell(pair, burseName, burses)
             const buyAmount = forUsd/depth.asks[0].price
             logger.verbose("BUY: " + buyAmount + " tokens")
             //                                        USD,  CURRENCY
-            await selectedBurse.createOrder(pair, true, depth.buy[0].price, buyAmount).then(res => logger.verbose( JSON.stringify(res)))
+            await selectedBurse.createOrder(pair, true, depth.asks[0].price, buyAmount).then(res => logger.verbose( JSON.stringify(res)))
                 .catch(err => {
                     throw "Failed to create Mexc order"
                 })

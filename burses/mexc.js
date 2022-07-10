@@ -107,12 +107,11 @@ class Mexc extends(bu){
         var asksDepth = new Array();
         var bidsDepth = new Array();
         return new Promise((resolve, reject) => {
-            var getDepthRequest = "https://www.mexc.com//open/api/v2/market/depth?symbol="
+            var getDepthRequest = "https://www.mexc.com/open/api/v2/market/depth?symbol="
             getDepthRequest += pair
             getDepthRequest += "&depth="
             getDepthRequest += precision
-            axios
-            .get(getDepthRequest)
+            axios.get(getDepthRequest)
             .then(res => {
                 for(const ask of res.data.data.asks) {
                     asksDepth.push({price: ask.price, amount: ask.quantity})

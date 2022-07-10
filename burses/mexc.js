@@ -171,6 +171,33 @@ class Mexc extends(bu){
         return crypto.createHmac('sha256', this.getSecret()).update( this.getKey() + timestamp + query).digest("hex").toString()    
     }
 
+    getBalance()
+    {
+        return new Promise((reso, err) => {
+            const array = new Array()
+            const baseUrl = "https://www.mexc.com"
+            const stemp = new Date().getTime().toString()
+            const path = "/open/api/v2/account/info"
+            axios.get(baseUrl + path, {
+                headers: {
+                    'Content-Type':'application/json',
+                    "ApiKey":this.getKey(),
+                    "Request-Time":stemp,
+                    "Signature":this.getSign(stemp, '')
+                }
+            }).then(res => {
+                Object.keys(res.data.data).forEach(function(key) {
+                    var val = res.data.data[key];
+                    val.currency = key
+                    array.push(val)
+                  });
+                reso(array)
+            }).catch(e => { 
+                err(e)
+            })
+        })
+    }
+
     getDepositAddress(currency)
     {
         return new Promise((reso, err) => {

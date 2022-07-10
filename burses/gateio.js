@@ -210,6 +210,34 @@ class Gateio extends(bu){
         return encoded
     }
 
+    getBalance()
+    {
+        return new Promise((reso, err) => {
+            const currentTimestamp = Math.trunc(Date.now() / 1000)
+            var query_param = ''
+            const payload_param = ""
+            const method = 'GET'
+            const host = "https://api.gateio.ws"
+            const prefix = "/api/v4"
+            const url = "/spot/accounts"
+            var urlPlusParam = host + prefix + url
+            if(query_param)
+                urlPlusParam += '?' + query_param
+            
+            axios.get(urlPlusParam, {
+            headers: {
+                "KEY":this.getKey(),
+                "Timestamp":currentTimestamp,
+                "SIGN":this.getSign(method, prefix, url, query_param, payload_param, currentTimestamp)
+            }
+            }).then(res => {
+                reso(res.data)
+            }).catch(e => { 
+                err(e)
+            })
+        })
+    }
+
     getDepositAddress(currency)
     {
         return new Promise((reso, err) => {

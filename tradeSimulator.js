@@ -78,8 +78,8 @@ class TradeSimulator {
               continue
             }
    
-            if((highestCurrencyInfo.chain === "BEP20" || highestCurrencyInfo.chain === "BSC") && highestCurrencyInfo.deposit === true && 
-               (lowestCurrencyInfo.chain === "BEP20" || lowestCurrencyInfo.chain === "BSC") && lowestCurrencyInfo.withdraw === true)
+            if((highestCurrencyInfo.chain === "BEP20" || highestCurrencyInfo.chain === "BSC") && highestCurrencyInfo.deposit && 
+               (lowestCurrencyInfo.chain === "BEP20" || lowestCurrencyInfo.chain === "BSC") && lowestCurrencyInfo.withdraw)
             {
               diffs.push(diff)
             }

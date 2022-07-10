@@ -192,6 +192,30 @@ class Bitmart extends(bu){
         return encoded
     }
 
+    // {"currency":"LOCUS","name":"Locus Chain","available":"10.00000000","frozen":"0.00000000"}
+    getBalance()
+    {
+        return new Promise((reso, err) => {
+            const currentTimestamp = Math.trunc(Date.now())
+            var query_param = ''
+            var urlPlusParam = "https://api-cloud.bitmart.com/account/v1/wallet"
+            if(query_param)
+                urlPlusParam += '?' + query_param
+            
+            axios.get(urlPlusParam, {
+            headers: {
+                "X-BM-KEY":this.getKey(),
+                "X-BM-TIMESTAMP":currentTimestamp,
+                "X-BM-SIGN":this.getSign(query_param, currentTimestamp)
+            }
+            }).then(res => {
+                reso(res.data.data.wallet)
+            }).catch(e => { 
+                err(e)
+            })
+        })
+    }
+
     getDepositAddress(currency)
     {
         return new Promise((reso, err) => {
